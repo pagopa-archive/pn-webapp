@@ -21,7 +21,7 @@
 <script>
 
 async function getHello() {
-    let url = jQuery('meta[name="API-GW"]').attr('content')
+    let url = jQuery('meta[name="API-GW"]').attr('content') + '/v1'
     let apiKey = jQuery('#API-Key').val()
 
     let response = await fetch( url, {
