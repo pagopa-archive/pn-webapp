@@ -1,0 +1,20 @@
+{
+  "name": "pn-webapp",
+  "version": "0.0.1",
+  "description": "Hello world in simple javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist_prod": "mkdir -p dist && npm install -g envsub && envsub index.html dist/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pagopa/pn-webapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pagopa/pn-webapp/issues"
+  },
+  "homepage": "https://github.com/pagopa/pn-webapp#readme"
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Hello, CDN!</title>
+    <meta name="description" content="Hello CDN">
+    <meta name="API-GW" content="${API_GW_BASE_URL}">
+    <script 
+        src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+		integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+		crossorigin="anonymous">
+    </script>
+</head>
+<body>
+    Hello CDN
+    <button id="btn">Call API-GW</button>
+    <p>
+        The secret <input id="API-Key" value="" />
+    </p>
+</body>
+<script>
+
+async function getHello() {
+    let url = jQuery('meta[name="API-GW"]').attr('content')
+    let apiKey = jQuery('#API-Key').val()
+
+    let response = await fetch( url, {
+        method: 'GET', 
+        headers: {
+            'x-api-key': apiKey
+        }
+    });
+    let json = await response.json();
+    return json;
+}
+
+
+jQuery(() => {
+
+    jQuery('#btn').click( (evt) => {
+        getHello().then( msg => alert( msg ))
+    });
+})
+</script>
+</html>
