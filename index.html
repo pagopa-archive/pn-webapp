@@ -38,7 +38,7 @@ async function getHello() {
 jQuery(() => {
 
     jQuery('#btn').click( (evt) => {
-        getHello().then( msg => alert( msg ))
+        getHello().then( msg => alert( JSON.stringify(msg) ))
     });
 })
 </script>
