@@ -166,6 +166,10 @@ Resources:
         ComputeType: BUILD_GENERAL1_SMALL
         Type: LINUX_CONTAINER
         Image: "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+        EnvironmentVariables:
+          - Name: BETA_ACCOUNT_ID
+            Value: !Ref BetaAccount
+
 
   WebAppPipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -229,32 +233,6 @@ Resources:
               OutputArtifacts:
                 - Name: WebAppForBeta
               RunOrder: 1
-              #RoleArn:
-              #    Fn::If:
-              #    - AddCodeBuildResource
-              #    - !Sub arn:aws:iam::${DevAccount}:role/ToolsAcctCodePipelineCodeCommitRole
-              #    - !Ref AWS::NoValue
-        #- Name: DeployToBeta
-        #  Actions:
-        #    - Name: DeployToBetaS3
-        #      ActionTypeId:
-        #        Category: Deploy
-        #        Owner: AWS
-        #        Version: 1
-        #        Provider: S3
-        #      Configuration:
-        #        ObjectKey: DeployedArtifacts
-        #        Extract: true
-        #        BucketName: pn-main-infra-cdn-s3bucketforwebsitecontent-2pw4o06wlqz7
-        #      InputArtifacts:
-        #        - Name: WebAppForBeta
-        #      RunOrder: 1
-        #      #RoleArn: !Sub arn:aws:iam::${TestAccount}:role/ToolsAcctCodePipelineCloudFormationRole  
-        #      RoleArn:
-        #          Fn::If:
-        #          - AddCodeBuildResource
-        #          - !Sub arn:aws:iam::${BetaAccount}:role/${ProductName}-${BranchName}-cicd-role
-        #          - !Ref AWS::NoValue
       ArtifactStore:
         Type: S3
         Location: { "Fn::ImportValue": {"Fn::Sub": "${ProductName}-${BranchName}-build-artifacts-buket-name"}}
