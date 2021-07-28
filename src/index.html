@@ -36,7 +36,8 @@ async function getHello() {
         cache: 'no-cache',
         headers: {
             'x-api-key': apiKey,
-            'X-PagoPA-PN-PA': paId
+            'X-PagoPA-PN-PA': paId,
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             paNotificationId: paNotificationId,
@@ -62,70 +63,3 @@ jQuery(() => {
 })
 </script>
 </html>
-
-
-
-
-
-
-
-
-curl -v -X 'POST' \
-"${baseUrl}/delivery/notifications/sent" \
--H 'accept: */*' \
--H "X-PagoPA-PN-PA: ${paId}" \
--H 'Content-Type: application/json' \
--H "x-api-key: ${apiKeySecret}" \
--d '{
-"paNotificationId": "'${paNotificationId}'",
-"subject": "string",
-"cancelledIun": "string",
-"recipients": [
-{
-"fc": "string",
-"digitalDomicile": {
-"type": "PEC",
-"address": "string"
-},
-"physicalAddress": [
-"string"
-]
-}
-],
-"documents": [
-{
-"digests": {
-"sha256": "string"
-},
-"contentType": "string",
-"body": "string"
-}
-],
-"payment": {
-"iuv": "string",
-"notificationFeePolicy": "FLAT_RATE",
-"f24": {
-"flatRate": {
-"digests": {
-"sha256": "string"
-},
-"contentType": "string",
-"body": "string"
-},
-"digital": {
-"digests": {
-"sha256": "string"
-},
-"contentType": "string",
-"body": "string"
-},
-"analog": {
-"digests": {
-"sha256": "string"
-},
-"contentType": "string",
-"body": "string"
-}
-}
-}
-}'
