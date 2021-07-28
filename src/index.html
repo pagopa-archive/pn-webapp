@@ -14,7 +14,9 @@
     <p>Hello CDN</p>
     <p>
         Fill<br>
-        the api-key secret <input type="password" id="API-Key" value="" />
+        the api-key secret <input type="password" id="API-Key" value="" />,<br>
+        the PA id <input type="text" id="paId" value="" /><br>
+        and the protocol number <input type="text" id="paNotificationId" value="" /><br>
     </p>
     <p>
         Then
@@ -24,14 +26,29 @@
 <script>
 
 async function getHello() {
-    let url = jQuery('meta[name="API-GW"]').attr('content') + '/v1'
+    let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
     let apiKey = jQuery('#API-Key').val()
+    let paId = jQuery('#paId').val()
+    let paNotificationId = jQuery('#paNotificationId').val()
 
     let response = await fetch( url, {
-        method: 'GET', 
+        method: 'POST',
+        cache: 'no-cache',
         headers: {
-            'x-api-key': apiKey
-        }
+            'x-api-key': apiKey,
+            'X-PagoPA-PN-PA': paId
+        },
+        body: JSON.stringify({
+            paNotificationId: paNotificationId,
+            subject: "Hello World",
+            recipients: [{
+                fc: "CodiceFiscale",
+                digitalDomicile: {
+                    type: "PEC",
+                    address: "hello@world"
+                }
+            }]
+        })
     });
     let json = await response.json();
     return json;
@@ -39,10 +56,76 @@ async function getHello() {
 
 
 jQuery(() => {
-
     jQuery('#btn').click( (evt) => {
         getHello().then( msg => alert( JSON.stringify(msg) ))
     });
 })
 </script>
 </html>
+
+
+
+
+
+
+
+
+curl -v -X 'POST' \
+"${baseUrl}/delivery/notifications/sent" \
+-H 'accept: */*' \
+-H "X-PagoPA-PN-PA: ${paId}" \
+-H 'Content-Type: application/json' \
+-H "x-api-key: ${apiKeySecret}" \
+-d '{
+"paNotificationId": "'${paNotificationId}'",
+"subject": "string",
+"cancelledIun": "string",
+"recipients": [
+{
+"fc": "string",
+"digitalDomicile": {
+"type": "PEC",
+"address": "string"
+},
+"physicalAddress": [
+"string"
+]
+}
+],
+"documents": [
+{
+"digests": {
+"sha256": "string"
+},
+"contentType": "string",
+"body": "string"
+}
+],
+"payment": {
+"iuv": "string",
+"notificationFeePolicy": "FLAT_RATE",
+"f24": {
+"flatRate": {
+"digests": {
+"sha256": "string"
+},
+"contentType": "string",
+"body": "string"
+},
+"digital": {
+"digests": {
+"sha256": "string"
+},
+"contentType": "string",
+"body": "string"
+},
+"analog": {
+"digests": {
+"sha256": "string"
+},
+"contentType": "string",
+"body": "string"
+}
+}
+}
+}'
