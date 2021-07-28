@@ -62,7 +62,7 @@ async function getHello() {
 jQuery(() => {
     jQuery('#btn').click( (evt) => {
         getHello().then( msg => {
-            jQuery('#output').append( '<pre>'+ JSON.stringify(msg) + '</pre>\n' )
+            jQuery('#output').prepend( '<pre>'+ JSON.stringify(msg) + '</pre>\n' )
         })
     });
 })
