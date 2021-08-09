@@ -7,7 +7,7 @@
 #  limitations under the License.
 
 AWSTemplateFormatVersion: '2010-09-09'
-Description: CodePipeline for the Sample Lambda Function
+Description: CodePipeline for pn-webapp
 Parameters:
   ProductName:
     Description: Name of the Project
@@ -122,7 +122,6 @@ Resources:
               - logs:CreateLogGroup
               - logs:CreateLogStream
               - logs:PutLogEvents
-              - cloudfront:CreateInvalidation # Nopt used
               - codebuild:BatchGetBuilds
               - codebuild:StartBuild
               - "*"
