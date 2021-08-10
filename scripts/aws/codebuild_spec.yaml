@@ -6,10 +6,10 @@ phases:
       - "export JQ_EXP='{ \"API_GW_BASE_URL\": .ApiGatewayUrlBeta, \"DEPLOY_BUCKET_NAME\": .WebAppBucketName } | to_entries | map(\"export \" + .key + \"=\" + .value) | .[]'"
       - "$( cat $CODEBUILD_SRC_DIR_InfraOutputs/InfrastructureOutputs.json | jq -r \"$JQ_EXP\" )"
       - echo "Build"
+      - npm install -g envsub
+      - export PATH=$PATH:$(pwd)/pn-develop/bin/
       - npm run dist_prod
       - ls dist
-  post_build:
-    commands:
       - echo "Deploy"
       - "export JQ_EXP='{ \"AWS_ACCESS_KEY_ID\": .Credentials.AccessKeyId, \"AWS_SECRET_ACCESS_KEY\": .Credentials.SecretAccessKey, \"AWS_SESSION_TOKEN\": .Credentials.SessionToken } | to_entries | map(\"export \" + .key + \"=\" + .value) | .[]'"
       - "$( aws sts assume-role --role-arn arn:aws:iam::$BETA_ACCOUNT_ID:role/$PREFIX-cicd-role --role-session-name $PREFIX-beta-deploy-session | jq -r \"$JQ_EXP\" )"
