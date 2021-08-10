@@ -168,6 +168,8 @@ Resources:
         EnvironmentVariables:
           - Name: BETA_ACCOUNT_ID
             Value: !Ref BetaAccount
+          - Name: PREFIX
+            Value: !Sub ${ProductName}-${BranchName}
 
 
   WebAppPipeline:

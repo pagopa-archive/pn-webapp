@@ -12,7 +12,7 @@ phases:
     commands:
       - echo "Deploy"
       - "export JQ_EXP='{ \"AWS_ACCESS_KEY_ID\": .Credentials.AccessKeyId, \"AWS_SECRET_ACCESS_KEY\": .Credentials.SecretAccessKey, \"AWS_SESSION_TOKEN\": .Credentials.SessionToken } | to_entries | map(\"export \" + .key + \"=\" + .value) | .[]'"
-      - "$( aws sts assume-role --role-arn arn:aws:iam::$BETA_ACCOUNT_ID:role/pn-main-cicd-role --role-session-name pn-main-beta-deploy-session | jq -r \"$JQ_EXP\" )"
+      - "$( aws sts assume-role --role-arn arn:aws:iam::$BETA_ACCOUNT_ID:role/$PREFIX-cicd-role --role-session-name $PREFIX-beta-deploy-session | jq -r \"$JQ_EXP\" )"
       - aws sts get-caller-identity
       - "( cd dist && find . -name \"*.html\" -exec echo aws s3api put-object --bucket $DEPLOY_BUCKET_NAME --key {} --body {} --content-type text/html \\; | sed -e 's|\\./||' | bash )"
       - "( cd dist && find . -name \"*.js\" -exec echo aws s3api put-object --bucket $DEPLOY_BUCKET_NAME --key {} --body {} --content-type text/javascript \\; | sed -e 's|\\./||' | bash )"
