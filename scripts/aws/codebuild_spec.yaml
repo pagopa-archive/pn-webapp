@@ -7,7 +7,7 @@ phases:
       - "$( cat $CODEBUILD_SRC_DIR_InfraOutputs/InfrastructureOutputs.json | jq -r \"$JQ_EXP\" )"
       - echo "Build"
       - npm install -g envsub
-      - export PATH=$PATH:$(pwd)/pn-develop/bin/
+      - export PATH=$PATH:$(pwd)/$PREFIX/bin/
       - npm run dist_prod
       - ls dist
       - echo "Deploy"
