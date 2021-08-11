@@ -16,7 +16,8 @@
         Fill<br>
         the api-key secret <input type="password" id="API-Key" value="" />,<br>
         the PA id <input type="text" id="paId" value="" /><br>
-        and the protocol number <input type="text" id="paNotificationId" value="" /><br>
+        and the protocol number <input type="text" id="paNotificationId" value="" />.<br>
+        Attach a file <input type="file" id="file-input" /><br>
     </p>
     <p>
         Then
@@ -27,6 +28,37 @@
     </div>
 </body>
 <script>
+function logMessage( msgString ) {
+    jQuery('#output').prepend( '<pre><b>' + (new Date()) + '</b> '+ msgString + '</pre>\n' )
+}
+
+var fileBody = "";
+var contentType = "";
+
+document.getElementById('file-input').addEventListener('change', readSingleFile, false);
+function readSingleFile(e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContents(contents);
+  };
+  reader.readAsDataURL(file);
+}
+function displayContents(contents) {
+  var parts = contents.split(";base64,");
+  fileBody = parts[1];
+  contentType = parts[0].substring( "data:".length, parts[0].length )
+  console.log( { "body": fileBody, "contentType": contentType } );
+
+  logMessage("File selected")
+}
+
+
+
 
 async function getHello() {
     let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
@@ -65,8 +97,8 @@ async function getHello() {
                 digests: {
                     sha256: "string"
                 },
-                contentType: "string",
-                body: "aXMgc2ltcGx5IGR1bW15IHRleHQgb2YgdGhlIHByaW50aW5nIGFuZCB0eXBlc2V0dGluZyBpbmR1c3RyeS4gTG9yZW0gSXBzdW0gaGFzIGJlZW4gdGhlIGluZHVzdHJ5J3Mgc3RhbmRhcmQgZHVtbXkgdGV4dCBldmVyIHNpbmNlIHRoZSAxNTAwcywgd2hlbiBhbiB1bmtub3duIHByaW50ZXIgdG9vayBhIGdhbGxleSBvZiB0eXBlIGFuZCBzY3JhbWJsZWQgaXQgdG8gbWFrZSBhIHR5cGUgc3BlY2ltZW4gYm9vay4gSXQgaGFzIHN1cnZpdmVkIG5vdCBvbmx5IGZpdmUgY2VudHVyaWVzLCBidXQgYWxzbyB0aGUgbGVhcCBpbnRvIGVsZWN0cm9uaWMgdHlwZXNldHRpbmcsIHJlbWFpbmluZyBlc3NlbnRpYWxseSB1bmNoYW5nZWQuIEl0IHdhcyBwb3B1bGFyaXNlZCBpbiB0aGUgMTk2MHMgd2l0aCB0aGUgcmVsZWFzZSBvZiBMZXRyYXNldCBzaGVldHMgY29udGFpbmluZyBMb3JlbSBJcHN1bSBwYXNzYWdlcywgYW5kIG1vcmUgcmVjZW50bHkgd2l0aCBkZXNrdG9wIHB1Ymxpc2hpbmcgc29mdHdhcmUgbGlrZSBBbGR1cyBQYWdlTWFrZXIgaW5jbHVkaW5nIHZlcnNpb25zIG9mIExvcmVtIElwc3VtLg=="
+                contentType: contentType,
+                body: fileBody
             }]
         })
     });
@@ -79,7 +111,7 @@ async function getHello() {
 jQuery(() => {
     jQuery('#btn').click( (evt) => {
         getHello().then( msg => {
-            jQuery('#output').prepend( '<pre>'+ JSON.stringify(msg) + '</pre>\n' )
+            logMessage( JSON.stringify(msg) );
         })
     });
 })
