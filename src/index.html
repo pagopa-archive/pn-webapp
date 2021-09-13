@@ -9,15 +9,26 @@
 		integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
 		crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
 </head>
 <body>
     <p>Hello CDN</p>
     <p>
         Fill<br>
         the api-key secret <input type="password" id="API-Key" value="" />,<br>
-        the PA id <input type="text" id="paId" value="" /><br>
-        and the protocol number <input type="text" id="paNotificationId" value="" />.<br>
-        Attach a file <input type="file" id="file-input" /><br>
+        the PA id <input type="text" id="paId" value="" />,<br>
+        the protocol number <input type="text" id="paNotificationId" value="" />,<br>
+        and the subject <input type="text" id="subject" value="" />.<br>
+    </p>
+    <p>
+        Attach Files<br>
+        <input type="checkbox" id="file-check1"><input class="doc" type="file" id="file-input1" data-idx="0" /><br>
+        <input type="checkbox" id="file-check2"><input class="doc" type="file" id="file-input2" data-idx="1" /><br>
+        <input type="checkbox" id="file-check3"><input class="doc" type="file" id="file-input3" data-idx="2" /><br>
+        <input type="checkbox" id="file-check4"><input class="doc" type="file" id="file-input4" data-idx="3" /><br>
+    </p>
+    <p id="recipients">
+        Select Recipients<br>
     </p>
     <p>
         Then
@@ -28,62 +39,119 @@
     </div>
 </body>
 <script>
+let RECIPIENT_DATA = {
+    "CGNNMO80A01H501M" : {
+        taxId: "CGNNMO80A01H501M",
+        denomination: "Nome1 Cognome1",
+        pecAddress: "nome1.cognome1@fail-both.domicilio-digitale.it"
+    },
+    "CGNNMO80A02H501R" : {
+        taxId: "CGNNMO80A02H501R",
+        denomination: "Nome2 Cognome2",
+        pecAddress: "nome2.cognome2@fail-first.domicilio-digitale.it"
+    },
+    "CGNNMO80A03H501T" : {
+        taxId: "CGNNMO80A03H501T",
+        denomination: "Nome3 Cognome3",
+        pecAddress: "nome3.cognome3@fail-first.domicilio-digitale.it"
+    }
+}
+let DATA = {
+    files: []
+}
+
+function unit8ToHexString( arrayBuffer ) {
+    let dv = new DataView( arrayBuffer );
+
+    return Array( arrayBuffer.byteLength )
+        .fill()
+        .map( (x, idx) => dv.getUint8(idx) )
+        .map( el => { let str = el.toString(16); if(str.length == 1 ) str = '0'+str; return str} )
+        .join('');
+}
+
 function logMessage( msgString ) {
     jQuery('#output').prepend( '<pre><b>' + (new Date()) + '</b> '+ msgString + '</pre>\n' )
 }
+function fillSelects() {
+    let idx = 1;
+    for( let key of Object.keys( RECIPIENT_DATA ) ) {
+        let info = RECIPIENT_DATA[key];
+        jQuery('#recipients')
+            .append('<input type="checkbox" id="recipient-check' + (idx++) + '" data-tax-id="' + info.taxId + '">' 
+                            + info.taxId + ' ' + info.denomination + ' ' + info.pecAddress + '<br>');
+    }
+    jQuery("select.recipient").each( ( idx, el) => {
+        jEl = jQuery(el);
+        
+    })
+}
 
-var fileBody = "";
-var contentType = "";
 
-document.getElementById('file-input').addEventListener('change', readSingleFile, false);
-function readSingleFile(e) {
-  var file = e.target.files[0];
+function readSingleFile( evtTarget, idx) {
+  var file = evtTarget.files[0];
   if (!file) {
     return;
   }
   var reader = new FileReader();
   reader.onload = function(e) {
     var contents = e.target.result;
-    displayContents(contents);
+    var parts = contents.split(";base64,");
+    
+    var fileBody = parts[1];
+    var contentType = parts[0].substring( "data:".length, parts[0].length )
+    DATA.files[ idx ] = {
+        body: fileBody,
+        contentType: contentType
+    }
+    
+    //console.log( { "body": fileBody, "contentType": contentType } );
+    logMessage("File selected")
   };
   reader.readAsDataURL(file);
 }
-function displayContents(contents) {
-  var parts = contents.split(";base64,");
-  fileBody = parts[1];
-  contentType = parts[0].substring( "data:".length, parts[0].length )
-  console.log( { "body": fileBody, "contentType": contentType } );
-
-  logMessage("File selected")
-}
 
 
 
 
-async function getHello() {
+async function sendNotification() {
     let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
     let apiKey = jQuery('#API-Key').val()
     let paId = jQuery('#paId').val()
     let paNotificationId = jQuery('#paNotificationId').val()
+    let subject = jQuery('#subject').val()
 
-    let response = await fetch( url, {
-        method: 'POST',
-        cache: 'no-cache',
-        headers: {
-            'x-api-key': apiKey,
-            'X-PagoPA-PN-PA': paId,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+    let requestBody = {
             paNotificationId: paNotificationId,
-            subject: "Hello World",
+            subject: subject,
             cancelledIun: null,
-            recipients: [{
-                taxId: "CodiceFiscale",
-                denomination: "Name1 Surname1",
+            recipients: [],
+            documents: []
+        };
+    for( let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked') ) {
+            let f = DATA.files[i-1];
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+            requestBody.documents.push({
+                body: f.body,
+                contentType: f.contentType,
+                digests : {
+                    sha256:  unit8ToHexString( sha256 )
+                }
+            });
+        }
+    }
+    for( let i = 1; i <= 3; i++ ) {
+        jqEl = jQuery('#recipient-check'+i);
+        if( jqEl.is(':checked') ) {
+            let taxId = jqEl.data().taxId;
+            let recipientInfo = RECIPIENT_DATA[taxId];
+            requestBody.recipients.push({
+                taxId: taxId,
+                denomination: recipientInfo.denomination,
                 digitalDomicile: {
                     type: "PEC",
-                    address: "hello@world.it"
+                    address: recipientInfo.pecAddress
                 },
                 physicalAddress: {
                     at: "string",
@@ -93,16 +161,24 @@ async function getHello() {
                     municipality: "string",
                     province: "string"
                 }
-            }],
-            documents: [{
-                digests: {
-                    sha256: "string"
-                },
-                contentType: contentType,
-                body: fileBody
-            }]
-        })
-    });
+            })
+        }
+    }
+
+    console.log( "Request body", requestBody );
+
+    let request = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+            'x-api-key': apiKey,
+            'X-PagoPA-PN-PA': paId,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( requestBody )
+    }
+    console.log( "Send request", request);
+    let response = await fetch( url, request);
 
     let json = await response.json();
     return json;
@@ -110,8 +186,14 @@ async function getHello() {
 
 
 jQuery(() => {
+    fillSelects();
+    jQuery("input.doc").each( (idx, el) => {
+        el.addEventListener('change', (e) => readSingleFile(e.target, idx), false);
+        readSingleFile( el, idx );
+    });
+
     jQuery('#btn').click( (evt) => {
-        getHello().then( msg => {
+        sendNotification().then( msg => {
             logMessage( JSON.stringify(msg) );
         })
     });
