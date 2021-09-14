@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dist_prod": "mkdir -p dist && npm install -g envsub && envsub src/index.html dist/index.html && cp -r src/js dist/js"
+    "dist_prod": "mkdir -p dist && npm install -g envsub && envsub src/index.html dist/index.html && cp -r src/js dist/"
   },
   "repository": {
     "type": "git",
