@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>PN: Cittadino</title>
+    <meta name="description" content="PN: Cittadino">
+    <meta name="API-GW" content="${API_GW_BASE_URL}">
+    <script src="js/jquery-3.6.0.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
+</head>
+<body>
+    <p>PN: Cittadino</p>
+    <!--
+    <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
+        scarica
+    </a>(http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M)
+    -->
+
+    <p>
+        <form name="download" name="download">
+            <table border="0">
+                <tr>
+                    <td>IUN: </td>
+                    <td><input type="text" name="txtIun" id="txtIun" size="50"></td>
+                </tr>
+                <tr>
+                    <td>DOCUMENT INDEX: </td>
+                    <td><input type="text" name="txtDocumentIndex" id="txtDocumentIndex" size="10"></td>
+                </tr>
+                <tr>
+                    <td>USER ID: </td>
+                    <td><input type="text" name="txtUserId" id="txtUserId"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="left"><input type="button" name="btnDownload" id="btnDownload" value="Scarica"></td>
+                </tr>
+            </table>
+        </form>
+    </p>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            jQuery('#btnDownload').click(function(){
+                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/acknowledgement/'
+                let iun = jQuery('#txtIun').val();
+                let docIndex = jQuery('#txtDocumentIndex').val();
+                let userId = jQuery('#txtUserId').val();
+                let url = endPoint + iun + '/' + docIndex + '?X-PagoPA-User-Id=' + userId
+                document.location.href = url;
+            });
+        });
+    </script>
+</body>
+</html>
