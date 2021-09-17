@@ -44,11 +44,11 @@
     <script type="text/javascript">
         jQuery(document).ready(function(){
             jQuery('#btnDownload').click(function(){
-                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/acknowledgement/'
+                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/received/'
                 let iun = jQuery('#txtIun').val();
                 let docIndex = jQuery('#txtDocumentIndex').val();
                 let userId = jQuery('#txtUserId').val();
-                let url = endPoint + iun + '/' + docIndex + '?X-PagoPA-User-Id=' + userId
+                let url = endPoint + iun + '/documents/' + docIndex + '?X-PagoPA-User-Id=' + userId
                 document.location.href = url;
             });
         });
