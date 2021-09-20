@@ -68,9 +68,14 @@
             }
 
             let response = await fetch(url, request);
-            let json = await response.json();
 
-            printNotification(json)
+            if (!response.ok) {
+                alert('An error has occured: ${response.status}');
+                return;
+            }
+
+            let json = await response.json();
+            printNotification(json);
         }
 
         function printNotification(json) {
