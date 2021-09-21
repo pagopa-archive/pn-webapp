@@ -10,6 +10,9 @@
 </head>
 <body>
     <p>PN: Cittadino</p>
+    <p>
+        the api-key secret <input type="password" id="API-Key" value="" />
+    </p>
     <!--
     <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
         scarica
@@ -57,12 +60,14 @@
         });
 
         async function fetchNotification(url, userId) {
+            let apiKey = jQuery('#API-Key').val()
             let request = {
                 method: 'GET',
                 cache: 'no-cache',
                 headers: {
                     'X-PagoPA-PN-PA': userId,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey
                 }
             }
 
