@@ -52,7 +52,8 @@ Per lo stop dell'ambiente si deve eseguire sulla bash la combinazione di tasto `
 	http-server stopped.
 ```
 
-Solo per utenti con sistemi operativi della famiglia Windows si segnala che al comando di stop si potrebbe ricevere un output di errore simile a quello che segue:
+Solo per utenti con sistemi operativi della famiglia Windows si segnala che, dopo aver eseguito il comando di stop, ad un successivio comando di avvio si 
+potrebbe ricevere un errore con un output simile a quello che segue:
 ```
 	To start using the proxy simply replace the proxied part of your url with: http://localhost:8095/proxy
 	events.js:292
