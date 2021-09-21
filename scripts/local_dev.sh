@@ -5,6 +5,8 @@ if ( [ "first_time" = "$1" ] ) then
     npm install -g local-cors-proxy
 fi
 
+is_win=$( echo $OS | grep "Win" | wc -l )
+
 PN_DELIVERY_URL=http://localhost:8080/
 LPC_PORT=8095
 HTTP_SERVER_PORT=8090
@@ -24,5 +26,7 @@ echo "CORS proxy pid $lcp_pid"
 echo "Start CDN server on port ${HTTP_SERVER_PORT}"
 http-server -p ${HTTP_SERVER_PORT}
 
-echo "Stop CORS proxy"
-kill ${lcp_pid}
+if ( [ "$is_win" -ne 1 ] ) then
+	echo "Stop CORS proxy"
+	kill ${lcp_pid}
+fi
