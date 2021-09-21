@@ -82,6 +82,47 @@
             printNotification(json);
         }
 
+        function fileName( headers ) {
+            
+            var contentDispositionValue = null;
+            for( let key of headers.keys() ) {
+                if("content-disposition" == key.toLowerCase()) {
+                    contentDispositionValue = headers.get( key )                    
+                }
+            }
+            
+            var fileName = "download.pdf";
+            if( contentDispositionValue != null ) {
+                fileName = contentDispositionValue.substr( contentDispositionValue.indexOf("=")+1)
+            }
+
+            return fileName;
+        }
+
+        function prepareDocLink( iun, idx ) {
+            jqEl = jQuery('#doc_' + idx);
+            let url = jQuery('meta[name="API-GW"]').attr('content') 
+                        + "/delivery/notifications/received/" 
+                        + iun 
+                        + "/documents/" + idx
+                        + "?X-PagoPA-User-Id=" + jQuery('#txtUserId').val();
+                
+            fetch(url, {headers: {
+                    'X-PagoPA-User-Id': jQuery('#txtUserId').val(),
+                    'x-api-key': jQuery('#API-Key').val()
+                }})
+                .then( res => res.blob()
+                    .then( b => ({ res: res, blob: b })) 
+                )
+                .then( data => {
+                    console.log( data );
+                    var file = window.URL.createObjectURL( data.blob );
+                    jqEl.attr('href', file);
+                    jqEl.attr('download', fileName( data.res.headers) )
+                    
+                });
+        }
+
         function printNotification(json) {
             console.log(json);
             jQuery('#container').text("");
@@ -112,8 +153,10 @@
             // documents
             jQuery('#container').append("<p><hr></p>");
             jQuery('#container').append("<p><b>Documents</b></p>");
-            for (var i = 0; i < json.documents.length; i++) {
-                jQuery('#container').append("<p><a href=\"" + jQuery('meta[name="API-GW"]').attr('content') + "/delivery/notifications/received/" + json.iun + "/documents/" + i + "?X-PagoPA-User-Id=CGNNMO80A01H501M\"</a>" + i + "</a></p>");
+            for (let i = 0; i < json.documents.length; i++) {
+                
+                jQuery('#container').append("<p><a id=\"doc_" + i + "\" href=\"#\"</a>" + i + "</a></p>");
+                prepareDocLink( json.iun, i)
             }
             jQuery('#container').append("<p><hr></p>");
         }
