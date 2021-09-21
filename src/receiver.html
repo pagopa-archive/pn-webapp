@@ -37,7 +37,7 @@
                     <td colspan="2">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="left"><input type="button" name="btnDownload" id="btnDownload" value="Scarica"></td>
+                    <td colspan="2" align="left"><input type="button" name="btnDownload" id="btnDownload" value="Carica"></td>
                 </tr>
             </table>
         </form>
@@ -46,7 +46,7 @@
     <script type="text/javascript">
         jQuery(document).ready(function(){
             jQuery('#btnDownload').click(function(){
-                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/received/'
+                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/received/';
                 let iun = jQuery('#txtIun').val();
                 // let docIndex = jQuery('#txtDocumentIndex').val();
                 let userId = jQuery('#txtUserId').val();
@@ -61,8 +61,7 @@
                 method: 'GET',
                 cache: 'no-cache',
                 headers: {
-                    'x-api-key': 'x-api-key',
-                    'X-PagoPA-User-Id': userId,
+                    'X-PagoPA-PN-PA': userId,
                     'Content-Type': 'application/json'
                 }
             }
@@ -88,7 +87,9 @@
             jQuery('#container').append("<p>" + "<b>Subject:</b> " + json.subject + "</p>");
             jQuery('#container').append("<p>" +  "<b>Protocol Number:</b> " + json.paNotificationId + "</p>");
             jQuery('#container').append("<p>" + " <b>Sent at:</b> " + json.sentAt + "</p>");
-            jQuery('#container').append("<p>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
+            if (json.sender) {
+                jQuery('#container').append("<p>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
+            }
 
             //recipients
             jQuery('#container').append("<p><hr></p>");
@@ -103,9 +104,9 @@
             }
             jQuery('#container').append("</p>");
 
-            // attachments
+            // documents
             jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<p><b>Attachments</b></p>");
+            jQuery('#container').append("<p><b>Documents</b></p>");
             for (var i = 0; i < json.documents.length; i++) {
                 jQuery('#container').append("<p><a href=\"" + jQuery('meta[name="API-GW"]').attr('content') + "/delivery/notifications/received/" + json.iun + "/documents/" + i + "?X-PagoPA-User-Id=CGNNMO80A01H501M\"</a>" + i + "</a></p>");
             }
