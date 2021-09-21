@@ -82,30 +82,27 @@
             printNotification(json);
         }
 
-        function fileName( headers ) {
+        function fileName( headers, iun, idx ) {
             
-            var contentDispositionValue = null;
+            var contentTypeValue = "fake/bin";
             for( let key of headers.keys() ) {
-                if("content-disposition" == key.toLowerCase()) {
+                if("content-type" == key.toLowerCase()) {
                     contentDispositionValue = headers.get( key )                    
                 }
             }
             
-            var fileName = "download.pdf";
-            if( contentDispositionValue != null ) {
-                fileName = contentDispositionValue.substr( contentDispositionValue.indexOf("=")+1)
-            }
-
+            var ext = contentTypeValue.substr( contentTypeValue.indexOf('/')+1);
+            var fileName = iun + "_doc" + idx + "." + ext;
+            
             return fileName;
         }
 
         function prepareDocLink( iun, idx ) {
-            jqEl = jQuery('#doc_' + idx);
+            let jqEl = jQuery('#doc_' + idx);
             let url = jQuery('meta[name="API-GW"]').attr('content') 
                         + "/delivery/notifications/received/" 
                         + iun 
-                        + "/documents/" + idx
-                        + "?X-PagoPA-User-Id=" + jQuery('#txtUserId').val();
+                        + "/documents/" + idx;
                 
             fetch(url, {headers: {
                     'X-PagoPA-User-Id': jQuery('#txtUserId').val(),
@@ -118,8 +115,7 @@
                     console.log( data );
                     var file = window.URL.createObjectURL( data.blob );
                     jqEl.attr('href', file);
-                    jqEl.attr('download', fileName( data.res.headers) )
-                    
+                    jqEl.attr('download', fileName( data.res.headers, iun, idx) )
                 });
         }
 
