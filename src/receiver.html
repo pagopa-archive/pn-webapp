@@ -9,17 +9,39 @@
     <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
 </head>
 <body>
-    <p>PN: Cittadino</p>
-    <p>
-        the api-key secret <input type="password" id="API-Key" value="" />
-    </p>
+    <style>
+        .timeline{}
+        .timeline_el{
+            margin-left: -30px;
+            background-color: lightgray;
+            list-style-type: none;
+        }
+        .timeline_details{
+            list-style-type: none;
+        }
+        .input_form{
+            position: fixed;
+            top: 5pt;
+            border: 1pt solid black;
+            width: 98%;
+            background-color: white;
+        }
+        #space {
+            margin-top: 175px;
+        }
+
+    </style>
+    
     <!--
     <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
         scarica
     </a>(http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M)
     -->
 
-    <p>
+    <div class='input_form'>
+        <p>PN: Cittadino</p>
+        <p>the api-key secret <input type="password" id="API-Key" value="" /></p>
+        
         <form name="download" name="download">
             <table border="0">
                 <tr>
@@ -44,8 +66,8 @@
                 </tr>
             </table>
         </form>
-    </p>
-
+    </div>
+    <div id='space'></div>
     <script type="text/javascript">
         jQuery(document).ready(function(){
             jQuery('#btnDownload').click(function(){
@@ -174,7 +196,25 @@
             // timeline
             jQuery('#container').append("<p><hr></p>");
             jQuery('#container').append("<p><b>Timeline</b></p>");
-            jQuery('#container').append("<pre>" + JSON.stringify( json.timeline, null, 2)+ "</pre>");
+            jQuery('#container1').text("");
+            json.timeline.forEach(el => {
+
+                jQuery('#container').append("<ul class='timeline'> <li class='timeline_el'>  Since: " + el.timestamp +  " Codice Fiscale: " + el.details.taxId +" Status: " +el.category)
+                switch(el.category){
+                case "RECEIVED_ACK": jQuery('#container').append("<ul class='timeline_details'> <li> Digest: " +el.details.documentsDigests[0].sha256 + "</li> </ul>"); break;
+                case "NOTIFICATION_PATH_CHOOSE":{
+                    let courtAddresses = el.details.courtesyAddresses.map( add => add.address);
+                    jQuery('#container').append("<ul class='timeline_details'> <li> Platform: " + el.details.platform.address +
+                     " </li> <li> Special: " + el.details.special.address + "</li> <li> General: "+ el.details.general.address + "</li>" +
+                     "<li> Courtesy: " +  courtAddresses + " </li> </ul>"); break;
+                } 
+                case "SEND_DIGITAL_DOMICILE": jQuery('#container').append("<ul class='timeline_details'> <li> Address: " + el.details.address.address + "</li> </ul>"); break;
+                case "SEND_DIGITAL_DOMICILE_FEEDBACK": jQuery('#container').append("<ul class='timeline_details'> <li> Address: "+
+                     el.details.address.address + "</li> <li> Result: " + el.details.errors[0] + "</li> </ul>"); break;
+                }
+                jQuery('#container').append("</li> </ul>"); 
+            });
+            //jQuery('#container').append("<pre>" + JSON.stringify( json.timeline, null, 2)+ "</pre>");
         }
 
     </script>
