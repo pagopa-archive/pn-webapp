@@ -97,6 +97,15 @@
             return fileName;
         }
 
+        function prepareDownloadButton(json) {
+            jQuery('#download').on('click', (evt) => {
+                for (let i = 0; i < json.documents.length; i++) {
+                    jQuery('#docs').append("<p><a id=\"doc_" + i + "\" href=\"#\"</a>" + i + "</a></p>");
+                    prepareDocLink( json.iun, i)
+                }
+            })
+        }
+
         function prepareDocLink( iun, idx ) {
             let jqEl = jQuery('#doc_' + idx);
             let url = jQuery('meta[name="API-GW"]').attr('content') 
@@ -148,13 +157,24 @@
 
             // documents
             jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<p><b>Documents</b></p>");
-            for (let i = 0; i < json.documents.length; i++) {
-                
-                jQuery('#container').append("<p><a id=\"doc_" + i + "\" href=\"#\"</a>" + i + "</a></p>");
-                prepareDocLink( json.iun, i)
-            }
+            jQuery('#container').append("<p><b>Documents</b><button id=\"download\">Downloads</button></p><p id=\"docs\"></p>");
+            prepareDownloadButton(json)
+            
+
+            // status history
             jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<p><b>Status</b> " + json.notificationStatus + "</p>");
+            for (var i = 0; i < json.notificationStatusHistory.length; i++) {
+                let el = json.notificationStatusHistory[i];
+                jQuery('#container').append("<p>Status: <b>" + el.status + "</b> since " + el.activeFrom + "</p>");
+            }
+            jQuery('#container').append("</p>");
+
+
+            // timeline
+            jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<p><b>Timeline</b></p>");
+            jQuery('#container').append("<pre>" + JSON.stringify( json.timeline, null, 2)+ "</pre>");
         }
 
     </script>
