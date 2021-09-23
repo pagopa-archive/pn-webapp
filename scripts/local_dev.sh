@@ -16,6 +16,7 @@ mkdir -p dist
 envsub src/index.html dist/index.html
 envsub src/receiver.html dist/receiver.html
 envsub src/sender.html dist/sender.html
+envsub src/search.html dist/search.html
 cp -r src/js dist/
 
 echo "Start CORS proxy"

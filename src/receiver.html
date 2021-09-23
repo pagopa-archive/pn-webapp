@@ -199,18 +199,18 @@
             jQuery('#container1').text("");
             json.timeline.forEach(el => {
 
-                jQuery('#container').append("<ul class='timeline'> <li class='timeline_el'>  Since: " + el.timestamp +  " Codice Fiscale: " + el.details.taxId +" Status: " +el.category)
+                jQuery('#container').append("<ul class='timeline'> <li class='timeline_el'> <b> Since: </b>" + el.timestamp +  " <b>Codice Fiscale: </b>" + el.details.taxId +" <b>Status: </b>" +el.category)
                 switch(el.category){
-                case "RECEIVED_ACK": jQuery('#container').append("<ul class='timeline_details'> <li> Digest: " +el.details.documentsDigests[0].sha256 + "</li> </ul>"); break;
+                case "RECEIVED_ACK": jQuery('#container').append("<ul class='timeline_details'> <li> <b>Digest: </b>" +el.details.documentsDigests[0].sha256 + "</li> </ul>"); break;
                 case "NOTIFICATION_PATH_CHOOSE":{
                     let courtAddresses = el.details.courtesyAddresses.map( add => add.address);
-                    jQuery('#container').append("<ul class='timeline_details'> <li> Platform: " + el.details.platform.address +
-                     " </li> <li> Special: " + el.details.special.address + "</li> <li> General: "+ el.details.general.address + "</li>" +
-                     "<li> Courtesy: " +  courtAddresses + " </li> </ul>"); break;
+                    jQuery('#container').append("<ul class='timeline_details'> <li> <b>Platform: </b>" + el.details.platform.address +
+                     " </li> <li> <b>Special: </b>" + el.details.special.address + "</li> <li> <b>General: </b>"+ el.details.general.address + "</li>" +
+                     "<li> <b>Courtesy: </b>" +  courtAddresses + " </li> </ul>"); break;
                 } 
-                case "SEND_DIGITAL_DOMICILE": jQuery('#container').append("<ul class='timeline_details'> <li> Address: " + el.details.address.address + "</li> </ul>"); break;
-                case "SEND_DIGITAL_DOMICILE_FEEDBACK": jQuery('#container').append("<ul class='timeline_details'> <li> Address: "+
-                     el.details.address.address + "</li> <li> Result: " + el.details.errors[0] + "</li> </ul>"); break;
+                case "SEND_DIGITAL_DOMICILE": jQuery('#container').append("<ul class='timeline_details'> <li> <b>Address: </b>" + el.details.address.address + "</li> </ul>"); break;
+                case "SEND_DIGITAL_DOMICILE_FEEDBACK": jQuery('#container').append("<ul class='timeline_details'> <li> <b>Address: </b>"+
+                     el.details.address.address + "</li> <li> <b>Result: </b>" + el.details.errors[0] + "</li> </ul>"); break;
                 }
                 jQuery('#container').append("</li> </ul>"); 
             });
