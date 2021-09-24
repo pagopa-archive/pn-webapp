@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dist_prod": "mkdir -p dist && npm install -g envsub && envsub src/index.html dist/index.html && envsub src/receiver.html dist/receiver.html && envsub src/sender.html dist/sender.html && envsub src/search.html dist/search.html && cp -r src/js dist/"
+    "dist_prod": "mkdir -p dist && npm install -g envsub && envsub src/index.html dist/index.html && envsub src/receiver.html dist/receiver.html && envsub src/sender.html dist/sender.html && cp -r src/js dist/"
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/pagopa/pn-webapp/issues"
   },
-  "homepage": "https://github.com/pagopa/pn-webapp#readme"
+  "homepage": "https://github.com/pagopa/pn-webapp#readme",
+  "devDependencies": {
+    "crypto": "^1.0.1",
+    "node-fetch": "^3.0.0",
+    "yargs": "^17.2.0"
+  }
 }
