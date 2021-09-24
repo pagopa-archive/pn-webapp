@@ -106,7 +106,6 @@ function sendNotification() {
     }
 
     const data = JSON.stringify( requestBody );
-    //console.log(data);
     
     const options = {
         hostname: hostname,
