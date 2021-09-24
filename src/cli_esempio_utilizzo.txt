@@ -1,0 +1,31 @@
+## per eseguire è necessario installare le seguenti due librerie di node:
+npm --save-dev install yargs
+npm --save-dev install node-fetch
+
+## lo script si esegue eseguendo lo script da terminale nella seguente modalità:
+$ node src\cli.js < elenco parametri >
+i parametri sono i seguenti:
+
+--paNotificationId="paNotificationId" 
+--subject="subject" 
+
+<destinatari: può essere un elenco>
+--recipient.taxId="CGNNMO80A01H501M" 
+--recipient.denomination="Nome1 Cognome1"
+--recipient.digitalDomicile.type="PEC"
+--recipient.digitalDomicile.address="nome1.cognome1@fail-both.domicilio-digitale.it"
+--recipient.physicalAddress.at="user1_at"
+--recipient.physicalAddress.address="user1_address"
+--recipient.physicalAddress.addressDetails="user1_addressDetail"
+--recipient.physicalAddress.zip="user1_zip"
+--recipient.physicalAddress.municipality="user1_municipality"
+--recipient.physicalAddress.province="user1_province"
+
+<documenti: può essere un elenco>
+--documents.digests.sha256="user1_sha"
+--documents.contentType="application/pdf"
+--documents.body="user1_body"
+
+
+## esempio di comando per generare una notifica con due destinatari e due allegati
+node src\cli.js --paNotificationId="paNotificationId" --subject="subject"  --recipient.taxId="CGNNMO80A01H501M" --recipient.denomination="Nome1 Cognome1" --recipient.digitalDomicile.type="PEC" --recipient.digitalDomicile.address="nome1.cognome1@fail-both.domicilio-digitale.it" --recipient.physicalAddress.at="user1_at" --recipient.physicalAddress.address="user1_address" --recipient.physicalAddress.addressDetails="user1_addressDetail" --recipient.physicalAddress.zip="user1_zip" --recipient.physicalAddress.municipality="user1_municipality" --recipient.physicalAddress.province="user1_province" --documents.digests.sha256="user1_sha" --documents.contentType="application/pdf" --documents.body="user1_body" --recipient.taxId="CGNNMO80A02H501R" --recipient.denomination="Nome2 Cognome2" --recipient.digitalDomicile.type="PEC" --recipient.digitalDomicile.address="nome2.cognome2@fail-first.domicilio-digitale.it" --recipient.physicalAddress.at="user2_at" --recipient.physicalAddress.address="user2_address" --recipient.physicalAddress.addressDetails="user2_addressDetail" --recipient.physicalAddress.zip="user2_zip" --recipient.physicalAddress.municipality="user2_municipality" --recipient.physicalAddress.province="user2_province" --documents.digests.sha256="user2_sha" --documents.contentType="application/pdf" --documents.body="user2_body"
