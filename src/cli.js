@@ -11,11 +11,10 @@ const argv = yargs(hideBin(process.argv)).argv
 sendNotification();
 
 function sendNotification() {
-    let hostname = "localhost";
-    let port = "8080";
-
-    let paId = argv.paId == undefined ? "pa_id" : argv.paId;
-    let apiKey = argv.apiKey == undefined ? "apiKey" : argv.apiKey;
+    let hostname = argv.hostname;
+    let port = argv.port;
+    let paId = argv.paId;
+    let apiKey = argv.apiKey;
 
     let recipientIsArray = Array.isArray(argv.recipient.taxId);
     let documentIsArray = Array.isArray(argv.document.name);
@@ -32,11 +31,11 @@ function sendNotification() {
 
     let recipientArg = argv.recipient;
     let documentArg = argv.document;
-    
+
     let requestBody = {
         paNotificationId: argv.paNotificationId,
         subject: argv.subject,
-        cancelledIun: "string",
+        cancelledIun: null,
         recipients: [],
         documents: []
     };
