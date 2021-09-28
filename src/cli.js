@@ -17,12 +17,8 @@ function sendNotification() {
     let paId = argv.paId == undefined ? "pa_id" : argv.paId;
     let apiKey = argv.apiKey == undefined ? "apiKey" : argv.apiKey;
 
-    let buf = fs.readFileSync("src/tmp/temp.pdf");
-    let sha256 = crypto.createHash('sha256').update(buf).digest('hex');
-    let base64 = buf.toString('base64');
-
     let recipientIsArray = Array.isArray(argv.recipient.taxId);
-    let documentIsArray = Array.isArray(argv.documents.digests.sha256);
+    let documentIsArray = Array.isArray(argv.document.name);
 
     if (recipientIsArray && recipientIsArray.length > 5) {
         console.log("Sono ammessi non piu' di 5 Destinatari");
@@ -34,9 +30,9 @@ function sendNotification() {
         process.exit(1);
     }
 
-    let recipient = argv.recipient;
-    let documents = argv.documents;
-
+    let recipientArg = argv.recipient;
+    let documentArg = argv.document;
+    
     let requestBody = {
         paNotificationId: argv.paNotificationId,
         subject: argv.subject,
@@ -46,59 +42,67 @@ function sendNotification() {
     };
 
     if (recipientIsArray) {
-        let recipientsCount = argv.recipient.taxId.length;
+        let recipientsCount = recipientArg.taxId.length;
         for (let i = 0; i < recipientsCount; i++) {
             requestBody.recipients.push({
-                taxId: recipient.taxId[i],
-                denomination: recipient.denomination[i],
+                taxId: recipientArg.taxId[i],
+                denomination: recipientArg.denomination[i],
                 digitalDomicile: {
-                    type: recipient.digitalDomicile.type[i] ,
-                    address: recipient.digitalDomicile.address[i] 
+                    type: recipientArg.digitalDomicile.type[i] ,
+                    address: recipientArg.digitalDomicile.address[i] 
                 },
                 physicalAddress: {
-                    at: recipient.physicalAddress.at[i],
-                    address: recipient.physicalAddress.address[i],
-                    addressDetails: recipient.physicalAddress.addressDetails[i],
-                    zip: recipient.physicalAddress.zip[i],
-                    municipality: recipient.physicalAddress.municipality[i],
-                    province: recipient.physicalAddress.province[i]
+                    at: recipientArg.physicalAddress.at[i],
+                    address: recipientArg.physicalAddress.address[i],
+                    addressDetails: recipientArg.physicalAddress.addressDetails[i],
+                    zip: recipientArg.physicalAddress.zip[i],
+                    municipality: recipientArg.physicalAddress.municipality[i],
+                    province: recipientArg.physicalAddress.province[i]
                 }
             })
         }
     } else {
         requestBody.recipients.push({
-            taxId: recipient.taxId,
-            denomination: recipient.denomination,
+            taxId: recipientArg.taxId,
+            denomination: recipientArg.denomination,
             digitalDomicile: {
-                type: recipient.digitalDomicile.type,
-                address: recipient.digitalDomicile.address 
+                type: recipientArg.digitalDomicile.type,
+                address: recipientArg.digitalDomicile.address 
             },
             physicalAddress: {
-                at: recipient.physicalAddress.at,
-                address: recipient.physicalAddress.address,
-                addressDetails: recipient.physicalAddress.addressDetails,
-                zip: recipient.physicalAddress.zip,
-                municipality: recipient.physicalAddress.municipality,
-                province: recipient.physicalAddress.province
+                at: recipientArg.physicalAddress.at,
+                address: recipientArg.physicalAddress.address,
+                addressDetails: recipientArg.physicalAddress.addressDetails,
+                zip: recipientArg.physicalAddress.zip,
+                municipality: recipientArg.physicalAddress.municipality,
+                province: recipientArg.physicalAddress.province
             }
         });
     }    
 
     if (documentIsArray) {
-        let documentsCount = argv.documents.digests.sha256.length;
+        let documentsCount = documentArg.name.length;
         for (let j = 0; j < documentsCount; j++) {
+            let buf = fs.readFileSync(documentArg.name[j]);
+            let sha256 = crypto.createHash('sha256').update(buf).digest('hex');
+            let base64 = buf.toString('base64');
+
             requestBody.documents.push({
                 body: base64,
-                contentType: documents.contentType[j],
+                contentType: documentArg.contentType[j],
                 digests : {
                     sha256: sha256
                 }
             });
         }
     } else {
+        let buf = fs.readFileSync(documentArg.name);
+        let sha256 = crypto.createHash('sha256').update(buf).digest('hex');
+        let base64 = buf.toString('base64');
+
         requestBody.documents.push({
             body: base64,
-            contentType: documents.contentType,
+            contentType: documentArg.contentType,
             digests: {
                 sha256: sha256
             }
