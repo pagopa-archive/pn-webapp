@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/pagopa/pn-webapp/issues"
   },
-  "homepage": "https://github.com/pagopa/pn-webapp#readme"
+  "homepage": "https://github.com/pagopa/pn-webapp#readme",
+  "devDependencies": {
+    "crypto": "^1.0.1",
+    "node-fetch": "^3.0.0",
+    "yargs": "^17.2.0"
+  }
 }
