@@ -11,26 +11,15 @@ const argv = yargs(hideBin(process.argv)).argv
 sendNotification();
 
 function sendNotification() {
-    let hostname = argv.hostname;
-    let port = argv.port;
+    let hostname = argv.hostname || 'localhost';
+    let port = argv.port || '8080';
     let paId = argv.paId;
     let apiKey = argv.apiKey;
 
-    let recipientIsArray = Array.isArray(argv.recipient.taxId);
-    let documentIsArray = Array.isArray(argv.document.name);
-
-    if (recipientIsArray && recipientIsArray.length > 5) {
-        console.log("Sono ammessi non piu' di 5 Destinatari");
-        process.exit(1);
-    }
-
-    if (documentIsArray && documentIsArray.length > 5) {
-        console.log("Sono ammessi non piu' di 5 Allegati");
-        process.exit(1);
-    }
-
     let recipientArg = argv.recipient;
     let documentArg = argv.document;
+    let recipientIsArray = Array.isArray(recipientArg.taxId);
+    let documentIsArray = Array.isArray(documentArg.file);
 
     let requestBody = {
         paNotificationId: argv.paNotificationId,
@@ -80,9 +69,9 @@ function sendNotification() {
     }    
 
     if (documentIsArray) {
-        let documentsCount = documentArg.name.length;
+        let documentsCount = documentArg.file.length;
         for (let j = 0; j < documentsCount; j++) {
-            let buf = fs.readFileSync(documentArg.name[j]);
+            let buf = fs.readFileSync(documentArg.file[j]);
             let sha256 = crypto.createHash('sha256').update(buf).digest('hex');
             let base64 = buf.toString('base64');
 
@@ -95,7 +84,7 @@ function sendNotification() {
             });
         }
     } else {
-        let buf = fs.readFileSync(documentArg.name);
+        let buf = fs.readFileSync(documentArg.file);
         let sha256 = crypto.createHash('sha256').update(buf).digest('hex');
         let base64 = buf.toString('base64');
 
