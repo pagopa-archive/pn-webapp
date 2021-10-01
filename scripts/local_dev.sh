@@ -14,9 +14,11 @@ HTTP_SERVER_PORT=8090
 export API_GW_BASE_URL=http://localhost:${LPC_PORT}/proxy
 mkdir -p dist 
 envsub src/index.html dist/index.html
-envsub src/receiver.html dist/receiver.html
+envsub src/notification_details.html dist/notification_details.html
 envsub src/sender.html dist/sender.html
 envsub src/search.html dist/search.html
+envsub src/sender_search.html dist/sender_search.html
+envsub src/receiver_search.html dist/receiver_search.html
 cp -r src/js dist/
 
 echo "Start CORS proxy"
