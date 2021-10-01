@@ -28,8 +28,8 @@
         Select Recipients<br>
     </p>
     <p>
-        Then
-        <button id="btn">Call API-GW</button>
+        Then <button id="btn">Direct load</button> <br>
+        or <button id="preload">Preload File</button> and <button id="notify">Confirm notification</button> <br>
     </p>
     <div id="output">
 
@@ -194,6 +194,140 @@ jQuery(() => {
             logMessage( JSON.stringify(msg) );
         })
     });
+})
+</script>
+<script>
+async function preloadFiles() {
+    let apiKey = jQuery('#API-Key').val()
+    let paId = jQuery('#paId').val()
+
+    for( let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked') ) {
+            let f = DATA.files[i-1];
+            console.log("Preload " + i + ": ", f)
+            let key = 'doc_' + i
+
+            let reserveUrl = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/attachments/preload';
+            let preloadInfoResponse = await fetch( reserveUrl, {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: {
+                    'x-api-key': apiKey,
+                    'X-PagoPA-PN-PA': paId,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( { key: key, contentType: f.contentType})
+            });
+            let preloadInfo = await preloadInfoResponse.json();
+            console.log( preloadInfo );
+
+            let loadUrl = preloadInfo.url
+            let loadResponse = await fetch( loadUrl, {
+                method: preloadInfo.httpMethod,
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': f.contentType,
+                    'x-amz-meta-secret': preloadInfo.secret
+                },
+                body: Base64.toUint8Array( f.body )
+            });
+
+            let versionId = loadResponse.headers.get('x-amz-version-id');
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+            console.log("Key:", preloadInfo.key, "VersionId:", versionId, "Sha256:", sha256);
+
+            f.key = preloadInfo.key;
+            f.versionId = versionId;
+            f.sha256 = unit8ToHexString( sha256 );
+            console.log("Updated file info ", f);
+
+            logMessage( "Preloaded file " + f.key + " with sha256 " + f.sha256 + " and version " + f.versionId );
+        }
+    }
+}
+
+async function confirmNotification() {
+    let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
+    let apiKey = jQuery('#API-Key').val()
+    let paId = jQuery('#paId').val()
+    let paNotificationId = jQuery('#paNotificationId').val()
+    let subject = jQuery('#subject').val()
+
+    let requestBody = {
+            paNotificationId: paNotificationId,
+            subject: subject,
+            cancelledIun: null,
+            recipients: [],
+            documents: []
+        };
+    for( let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked') ) {
+            let f = DATA.files[i-1];
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+            requestBody.documents.push({
+                ref : {
+                    key: f.key,
+                    versionToken: f.versionId
+                },
+                contentType: null, // f.contentType,
+                digests : {
+                    sha256:  f.sha256
+                }
+            });
+        }
+    }
+    for( let i = 1; i <= 3; i++ ) {
+        jqEl = jQuery('#recipient-check'+i);
+        if( jqEl.is(':checked') ) {
+            let taxId = jqEl.data().taxId;
+            let recipientInfo = RECIPIENT_DATA[taxId];
+            requestBody.recipients.push({
+                taxId: taxId,
+                denomination: recipientInfo.denomination,
+                digitalDomicile: {
+                    type: "PEC",
+                    address: recipientInfo.pecAddress
+                },
+                physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale",
+                    addressDetails: "scala A",
+                    zip: "CAP di " + i,
+                    municipality: "Comune",
+                    province: "PROV"
+                }
+            })
+        }
+    }
+
+    console.log( "Request body", requestBody );
+
+    let request = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+            'x-api-key': apiKey,
+            'X-PagoPA-PN-PA': paId,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( requestBody )
+    }
+    console.log( "Send request", request);
+    let response = await fetch( url, request);
+
+    let json = await response.json();
+    return json;
+}
+
+jQuery(() => {
+    jQuery("#preload").click( (evt) => {
+        preloadFiles();
+    })
+    jQuery("#notify").click( (evt) => {
+        confirmNotification().then( msg => {
+            logMessage( JSON.stringify(msg) );
+        })
+    })
 })
 </script>
 </html>
