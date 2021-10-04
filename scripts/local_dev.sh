@@ -16,7 +16,6 @@ mkdir -p dist
 envsub src/index.html dist/index.html
 envsub src/notification_details.html dist/notification_details.html
 envsub src/sender.html dist/sender.html
-envsub src/search.html dist/search.html
 envsub src/sender_search.html dist/sender_search.html
 envsub src/receiver_search.html dist/receiver_search.html
 cp -r src/js dist/

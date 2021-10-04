@@ -6,6 +6,7 @@ url_prefix="/"
 if ( [ -f 'package.json' ] ) then
   npm install
   node src/cli.js --hostname=$hostname --port=$port --url_prefix=$url_prefix \
+      --baseUrl="http://localhost:8080" \
       --paId="paId" \
       --api-key="api-key" \
       \

@@ -1,133 +1,148 @@
 <!doctype html>
-    <html lang="it">
-    <head>
-        <meta charset="utf-8">
-        <title>Mittente: Nuova Notifica</title>
-        <meta name="description" content="PN: Pubblica Amministrazione">
-        <meta name="API-GW" content="${API_GW_BASE_URL}">
-        <script src="js/jquery-3.6.0.slim.min.js"></script>
-        <script src="js/bootstrap.bundle.min.js"></script>
+<html lang="it">
+<head>
+    <meta charset="utf-8">
+    <title>Mittente: Nuova Notifica</title>
+    <meta name="description" content="PN: Pubblica Amministrazione">
+    <meta name="API-GW" content="${API_GW_BASE_URL}">
+    <script src="js/jquery-3.6.0.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
 
-        <link href="js/bootstrap.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
-    </head>
-    <body>
-        <style>
-        .row {
-            margin: 10pt;
-        }
-        .toast {
-            left: 50%;
-            position: fixed;
-            transform: translate(-50%, 0px);
-            z-index: 9999;
-            margin-top: 250pt;
-        }
-    </style>
+    <link href="js/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
+</head>
+<body>
+<style>
+.row {
+    margin: 10pt;
+}
+.toast {
+    left: 50%;
+    right: 50%;
+    position: fixed;
+    z-index: 9999;
+    margin-top: 250pt;
+    background-color: white;
+    width: 600px;
+}
+</style>
 
-    <div class='toast' role='alert' aria-live='assertive' aria-atomic='true'><div class='d-flex'><div class='toast-body'>File caricato correttamente</div><button type='button' class='btn-close me-2 m-auto'data-bs-dismiss='toast' aria-label='Close'></button></div></div>
-
-    <div class="container">
-
-        <h1>Mittente: Nuova Notifica</h1>
-
-        <form class="row">
-            <div class="col-sm-1">
-              <label for="API-Key" class="col-form-label">API-KEY</label>
-          </div>
-          <div class="col-md-3">
-              <input type="password" class="form-control" id="API-Key">
-          </div>
-          <div class="col-auto">
-              <label for="API-Key" class="form-text">AWS API Key</label>
-          </div>
-      </form>
-
-      <form class="row">
-        <div class="col-sm-1">
-          <label for="paId" class="col-form-label">PA ID</label>
-      </div>
-      <div class="col-md-3">
-          <input type="text" class="form-control" id="paId">
-      </div>
-      <div class="col-auto">
-          <label for="paId" class="form-text">Identificativo della PA</label>
-      </div>
-  </form>
-
-  <form class="row">
-    <div class="col-sm-1">
-      <label for="paNotificationId" class="col-form-label"># Protocol</label>
-  </div>
-  <div class="col-md-3">
-      <input type="text" class="form-control" id="paNotificationId">
-  </div>
-  <div class="col-auto">
-      <label for="paNotificationId" class="form-text">Numero di protocollo</label>
-  </div>
-</form>
-
-<form class="row">
-    <div class="col-sm-1">
-      <label for="subject" class="col-form-label">Subject</label>
-  </div>
-  <div class="col-md-3">
-      <input type="text" class="form-control" id="subject">
-  </div>
-  <div class="col-auto">
-      <label for="subject" class="form-text">Descrizione notifica</label>
-  </div>
-</form>
-<h3>Attach Files</h3>
-<form class="row">
-    <div class="col-auto align-self-center">
-        <input class="form-check-input" type="checkbox" value="" id="file-check1">
+<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'>
+    <div class='d-flex'>
+        <div class='toast-body'></div>
+        <button type='button' class='btn-close me-2 m-auto'data-bs-dismiss='toast' aria-label='Close' id="closeToast"></button>
     </div>
-    <div class="col-auto">
-        <input class="doc form-control" type="file" id="file-input1" data-idx="0"/>
-    </div>
-    <div class="col-auto">
-
-    </div>
-</form>
-<form class="row">
-    <div class="col-auto align-self-center">
-        <input class="form-check-input" type="checkbox" value="" id="file-check2"/>
-    </div>
-    <div class="col-auto">
-        <input class="doc form-control" type="file" id="file-input2" data-idx="1"/>
-    </div>
-</form>
-<form class="row">
-    <div class="col-auto align-self-center">
-        <input class="form-check-input" type="checkbox" value="" id="file-check3"/>
-    </div>
-    <div class="col-auto">
-        <input class="doc form-control" type="file" id="file-input3" data-idx="2"/>
-    </div>
-</form>
-<form class="row">
-    <div class="col-auto align-self-center">
-        <input class="form-check-input" type="checkbox" value="" id="file-check4"/>
-    </div>
-    <div class="col-auto">
-        <input class="doc form-control" type="file" id="file-input4" data-idx="3"/>
-    </div>
-</form>
-
-<h3>Select Recipients</h3>
-<div id="recipients"> </div>
-
-<form class="row">
-    <div class="col-auto">
-      <button type="button" class="btn btn-outline-dark" name="btn" id="btn">Call API-GW</button>
-  </div>
-</form>
-
-<div id="result">
-    <h3>Response</h3>
 </div>
 
+<div class="container">
+
+    <h1>Mittente: Nuova Notifica</h1>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="API-Key" class="col-form-label">API-KEY</label>
+        </div>
+        <div class="col-md-3">
+          <input type="password" class="form-control" id="API-Key">
+        </div>
+        <div class="col-auto">
+          <label for="API-Key" class="form-text">AWS API Key</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="paId" class="col-form-label">PA ID</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="paId">
+        </div>
+        <div class="col-auto">
+          <label for="paId" class="form-text">Identificativo della PA</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="paNotificationId" class="col-form-label"># Protocol</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="paNotificationId">
+        </div>
+        <div class="col-auto">
+          <label for="paNotificationId" class="form-text">Numero di protocollo</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="subject" class="col-form-label">Subject</label>
+      </div>
+      <div class="col-md-3">
+          <input type="text" class="form-control" id="subject">
+      </div>
+      <div class="col-auto">
+          <label for="subject" class="form-text">Descrizione notifica</label>
+      </div>
+    </form>
+
+    <h3>Attach Files</h3>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check1">
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input1" data-idx="0"/>
+        </div>
+        <div class="col-auto">
+
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check2"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input2" data-idx="1"/>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check3"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input3" data-idx="2"/>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check4"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input4" data-idx="3"/>
+        </div>
+    </form>
+
+    <h3>Select Recipients</h3>
+    <div id="recipients"> </div>
+
+    <form class="row">
+        <div class="col-auto">
+          <button type="button" class="btn btn-outline-dark" name="btn" id="btn">Call API-GW</button>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto">
+            <button type="button" class="btn btn-outline-dark" name="btn" id="preload">Preload</button>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-outline-dark" name="btn" id="notify">Notify</button>
+        </div>
+    </form>
+
+    <div id="result">
+        <h3>Response</h3>
+    </div>
 </div>
 </body>
 <script>
@@ -163,6 +178,7 @@
     }
 
     function logMessage( msgString ) {
+        jQuery('.toast-body').append( msgString + '<br>');
         jQuery('.toast').toast('show');
     }
 
@@ -289,6 +305,144 @@ jQuery(() => {
             printResponse(msg);
         })
     });
+
+    jQuery('#closeToast').click( (evt) => {
+       jQuery('.toast-body').empty();
+    });
+})
+</script>
+<script>
+async function preloadFiles() {
+    let apiKey = jQuery('#API-Key').val()
+    let paId = jQuery('#paId').val()
+
+    for( let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked') ) {
+            let f = DATA.files[i-1];
+            console.log("Preload " + i + ": ", f)
+            let key = 'doc_' + i
+
+            let reserveUrl = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/attachments/preload';
+            let preloadInfoResponse = await fetch( reserveUrl, {
+                method: 'POST',
+                cache: 'no-cache',
+                headers: {
+                    'x-api-key': apiKey,
+                    'X-PagoPA-PN-PA': paId,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( { key: key, contentType: f.contentType})
+            });
+            let preloadInfo = await preloadInfoResponse.json();
+            console.log( preloadInfo );
+
+            let loadUrl = preloadInfo.url
+            let loadResponse = await fetch( loadUrl, {
+                method: preloadInfo.httpMethod,
+                cache: 'no-cache',
+                headers: {
+                    'Content-Type': f.contentType,
+                    'x-amz-meta-secret': preloadInfo.secret
+                },
+                body: Base64.toUint8Array( f.body )
+            });
+
+            let versionId = loadResponse.headers.get('x-amz-version-id');
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+            console.log("Key:", preloadInfo.key, "VersionId:", versionId, "Sha256:", sha256);
+
+            f.key = preloadInfo.key;
+            f.versionId = versionId;
+            f.sha256 = unit8ToHexString( sha256 );
+            console.log("Updated file info ", f);
+
+            logMessage( "Preloaded file " + f.key + " with sha256 " + f.sha256 + " and version " + f.versionId );
+        }
+    }
+}
+
+async function confirmNotification() {
+    let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
+    let apiKey = jQuery('#API-Key').val()
+    let paId = jQuery('#paId').val()
+    let paNotificationId = jQuery('#paNotificationId').val()
+    let subject = jQuery('#subject').val()
+
+    let requestBody = {
+            paNotificationId: paNotificationId,
+            subject: subject,
+            cancelledIun: null,
+            recipients: [],
+            documents: []
+        };
+    for( let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked') ) {
+            let f = DATA.files[i-1];
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+            requestBody.documents.push({
+                ref : {
+                    key: f.key,
+                    versionToken: f.versionId
+                },
+                contentType: null, // f.contentType,
+                digests : {
+                    sha256:  f.sha256
+                }
+            });
+        }
+    }
+    for( let i = 1; i <= 3; i++ ) {
+        jqEl = jQuery('#recipient-check'+i);
+        if( jqEl.is(':checked') ) {
+            let taxId = jqEl.data().taxId;
+            let recipientInfo = RECIPIENT_DATA[taxId];
+            requestBody.recipients.push({
+                taxId: taxId,
+                denomination: recipientInfo.denomination,
+                digitalDomicile: {
+                    type: "PEC",
+                    address: recipientInfo.pecAddress
+                },
+                physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale",
+                    addressDetails: "scala A",
+                    zip: "CAP di " + i,
+                    municipality: "Comune",
+                    province: "PROV"
+                }
+            })
+        }
+    }
+
+    console.log( "Request body", requestBody );
+
+    let request = {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+            'x-api-key': apiKey,
+            'X-PagoPA-PN-PA': paId,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify( requestBody )
+    }
+    console.log( "Send request", request);
+    let response = await fetch( url, request);
+
+    let json = await response.json();
+    return json;
+}
+
+jQuery(() => {
+    jQuery("#preload").click( (evt) => {
+        preloadFiles();
+    })
+    jQuery("#notify").click( (evt) => {
+        confirmNotification().then( msg => {
+            printResponse( msg );
+        })
+    })
 })
 </script>
 </html>
