@@ -16,6 +16,7 @@ phases:
       - aws sts get-caller-identity
       - "( cd dist && find . -name \"*.html\" -exec echo aws s3api put-object --bucket $DEPLOY_BUCKET_NAME --key {} --body {} --content-type text/html \\; | sed -e 's|\\./||' | bash )"
       - "( cd dist && find . -name \"*.js\" -exec echo aws s3api put-object --bucket $DEPLOY_BUCKET_NAME --key {} --body {} --content-type text/javascript \\; | sed -e 's|\\./||' | bash )"
+      - "( cd dist && find . -name \"*.css\" -exec echo aws s3api put-object --bucket $DEPLOY_BUCKET_NAME --key {} --body {} --content-type text/css \\; | sed -e 's|\\./||' | bash )"
 artifacts:
   files:
     - 'dist/**'
