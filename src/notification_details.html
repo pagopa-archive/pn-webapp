@@ -106,17 +106,17 @@
         let apiKey = localStorage.getItem("apiKey");
         if(apiKey)
         {
-         jQuery('#API-Key').val(apiKey);
-     }
-     jQuery('#API-Key').change( (evt) => {
+           jQuery('#API-Key').val(apiKey);
+       }
+       jQuery('#API-Key').change( (evt) => {
         let apiKey = jQuery('#API-Key').val();
         localStorage.setItem("apiKey", apiKey);
     });
-     let iun = (new URL(location.href)).searchParams.get('iun');
-     let searcherId = (new URL(location.href)).searchParams.get('searcherId');
-     let role = (new URL(location.href)).searchParams.get('role');
-     jQuery('#txtUserId').val(searcherId);
-     jQuery('#btnDownload').click(function(){
+       let iun = (new URL(location.href)).searchParams.get('iun');
+       let searcherId = (new URL(location.href)).searchParams.get('searcherId');
+       let role = (new URL(location.href)).searchParams.get('role');
+       jQuery('#txtUserId').val(searcherId);
+       jQuery('#btnDownload').click(function(){
         let userHeader;
         let userEndPoint;
         if(role && role == "sender")
@@ -131,13 +131,13 @@
         }
         let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/'+ userEndPoint + '/';
         let url = endPoint + iun;
-        fetchNotification(url, searcherId, role, userHeader);
+        fetchNotification(url, searcherId, userEndPoint, userHeader);
         fetchLegalFacts(url, searcherId, userEndPoint, userHeader);
     });
-     jQuery('#btnDownload').click();
- });
+       jQuery('#btnDownload').click();
+   });
 
-    async function fetchNotification(url, searcherId, role, userHeader) {
+    async function fetchNotification(url, searcherId, userEndPoint, userHeader) {
 
         let apiKey = jQuery('#API-Key').val();
         let request = {
@@ -158,7 +158,7 @@
         }
 
         let json = await response.json();
-        printNotification(json, userHeader, searcherId);
+        printNotification(json, userEndPoint, userHeader, searcherId);
     }
 
     async function fetchLegalFacts(url, searcherId, userEndPoint, userHeader) {
@@ -201,21 +201,22 @@
         return fileName;
     }
 
-    function prepareDownloadButton(json, userHeader, searcherId) {
+    function prepareDownloadButton(json, userEndPoint, userHeader, searcherId) {
         jQuery('#download').on('click', (evt) => {
             jQuery('#docs').empty();
             for (let i = 0; i < json.documents.length; i++) {
                 jQuery('#docs').append("<div class='col-auto' ><a id=\"doc_" + i + "\" href=\"#\"</a>Document#: " + i + "</a></div>");
-                prepareDocLink( json.iun, i, userHeader, searcherId)
+                prepareDocLink( json.iun, i, userEndPoint,  userHeader, searcherId)
             }
         })
     }
 
-    function prepareDocLink( iun, idx , userHeader, searcherId) {
+    function prepareDocLink( iun, idx, userEndPoint, userHeader, searcherId) {
 
         let jqEl = jQuery('#doc_' + idx);
         let url = jQuery('meta[name="API-GW"]').attr('content') 
-        + "/delivery/notifications/received/" 
+        + "/delivery/notifications/"
+        + userEndPoint + "/" 
         + iun 
         + "/documents/" + idx;
 
@@ -242,12 +243,12 @@
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
             var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> " +
-            "<b>Name: </b>" + json[i].id +
+            "<b>Name: </b>" + json[i].legalFactId +
             "<b> Type: </b>" + json[i].type +
             "<b>  </b>" +   
             "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
             jQuery('#legalfactsList').append(content);
-            prepareDownloadLink(searcherId ,iun, i, json[i].id, userEndPoint, userHeader);
+            prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader);
         }
     }
 
@@ -277,7 +278,7 @@
         });
     }
 
-    function printNotification(json, userHeader, searcherId) {
+    function printNotification(json, userEndPoint, userHeader, searcherId) {
 
         jQuery('#notification').empty();
         jQuery('#notification').append("<h1>Dettaglio Notifica</h1>");
@@ -306,7 +307,7 @@
             jQuery('#recipients').append("</p>");
 
             
-            prepareDownloadButton(json, userHeader, searcherId);
+            prepareDownloadButton(json, userEndPoint, userHeader, searcherId);
             
 
             // status history
