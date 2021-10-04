@@ -230,7 +230,7 @@
             .then( b => ({ res: res, blob: b })) 
             )
         .then( data => {
-            console.log( data );
+            //console.log( data );
             var file = window.URL.createObjectURL( data.blob );
             jqEl.attr('href', file);
             jqEl.attr('download', fileName( data.res.headers, iun, idx) )
@@ -243,9 +243,12 @@
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
             var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> " +
-            "<b>Name: </b>" + json[i].legalFactId +
-            "<b> Type: </b>" + json[i].type +
-            "<b>  </b>" +   
+            "<b>File Name: </b>" + json[i].legalFactId +
+            // "<p></p>" +
+            // "<b>Type: </b>" + json[i].type +
+            // "<b>  </b>" +
+            //+ "<svg class='bi' width='32' height='32' fill='currentColor'><use xlink:href='bootstrap-icons.svg#heart-fill'/></svg>"
+            //+ "<i class='bi bi-arrow-down-circle-fill'></i>"
             "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
             jQuery('#legalfactsList').append(content);
             prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader);
@@ -271,7 +274,7 @@
             .then( b => ({ res: res, blob: b })) 
             )
         .then( data => {
-            console.log( data );
+            //console.log( data );
             var file = window.URL.createObjectURL( data.blob );
             jqEl.attr('href', file);
             jqEl.attr('download', fileName( data.res.headers, iun, fileId) )

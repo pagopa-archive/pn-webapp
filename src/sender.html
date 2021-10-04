@@ -216,12 +216,8 @@
 }
 
 function printResponse(json) {
-    console.log(json);
-
-    //jQuery('#result').append("<form class='row'> <div class='col-auto'><h5>Timestamp: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>#Protocol: </h5>" + json.paNotificationId + "</div></form>");
 
     jQuery('#result').prepend("<form class='row'> <div class='col-auto'><h5>Timestamp: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>#Protocol: </h5>" + json.paNotificationId + "</div></form>");
-
 }
 
 async function sendNotification() {
