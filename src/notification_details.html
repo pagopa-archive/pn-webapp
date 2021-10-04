@@ -1,0 +1,264 @@
+<!doctype html>
+    <html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <title>Dettaglio Notifica</title>
+        <meta name="description" content="PN: Cittadino">
+        <meta name="API-GW" content="${API_GW_BASE_URL}">
+        <script src="js/jquery-3.6.0.slim.min.js"></script>
+        <link href="js/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
+    </head>
+    <body>
+        <style>
+        .timeline{}
+        .timeline_el{
+            margin-left: -30px;
+            background-color: lightgray;
+            list-style-type: none;
+        }
+        .timeline_details{
+            list-style-type: none;
+        }
+        .input_form{
+            position: fixed;
+            top: 5pt;
+            border: 1pt solid black;
+            width: 98%;
+            background-color: white;
+        }
+        .container-top {
+            border: 1pt solid black;
+            background-color: white;
+        }
+        .fixed-top {
+            top: 5pt;
+        }
+        #space {
+            top: 5pt;
+            margin-top: 30px;
+        }
+        .row {
+            margin: 10pt;
+        }
+        /*.list-group {
+            margin-left: -30px;
+            background-color: lightgray;
+            }*/
+
+        </style>
+        
+    <!--
+    <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
+        scarica
+    </a>(http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M)
+-->
+<!-- <div class="container">
+    <h1>Dettaglio Notifica</h1>
+</div> -->
+
+<div class="container container-top fixed-top">
+    
+
+    <form class="row justify-content-md-center">
+      <div class="col-sm-1">
+        <label for="API-Key" class="col-form-label">API-KEY</label>
+    </div>
+    <div class="col-md-3">
+        <input type="password" class="form-control" id="API-Key">
+    </div>
+    <div class="col-auto">
+        <label for="API-Key" class="form-text">AWS API Key</label>
+    </div>
+    <div class="col-sm-1">
+      <button type="button" class="btn btn-outline-dark" name="btnDownload" id="btnDownload">Refresh</button>
+  </div>
+</form>
+</div>
+<div id='space' class='container'></div>
+<br/><br/>
+<div id="container" class='container'></div>
+
+</body>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        let apiKey = localStorage.getItem("apiKey");
+        if(apiKey)
+        {
+           jQuery('#API-Key').val(apiKey);
+       }
+       jQuery('#API-Key').change( (evt) => {
+        let apiKey = jQuery('#API-Key').val();
+        localStorage.setItem("apiKey", apiKey);
+    });
+       let iun = (new URL(location.href)).searchParams.get('iun');
+       let searcherId = (new URL(location.href)).searchParams.get('searcherId');
+       let role = (new URL(location.href)).searchParams.get('role');
+       jQuery('#txtUserId').val(searcherId);
+       console.log((new URL(location.href)).searchParams.get('iun'));
+       jQuery('#btnDownload').click(function(){
+        let userHeader;
+        let userEndPoint;
+        if(role && role == "sender")
+        {
+            userHeader = 'X-PagoPA-PN-PA'
+            userEndPoint = "sent";
+        }
+        if(role && role == "receiver")
+        {
+            userHeader = 'X-PagoPA-User-Id'
+            userEndPoint = "received";
+        }
+        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/'+ userEndPoint + '/';
+        let url = endPoint + iun;
+        fetchNotification(url, searcherId, role, userHeader);
+    });
+       jQuery('#btnDownload').click();
+   });
+
+    async function fetchNotification(url, searcherId, role, userHeader) {
+
+        console.log(url,searcherId,role,userHeader);
+        let apiKey = jQuery('#API-Key').val();
+        let request = {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey
+            }
+        }
+        request.headers[userHeader] = searcherId;
+
+        let response = await fetch(url, request);
+
+        if (!response.ok) {
+            alert('An error has occured: ${response.status}');
+            return;
+        }
+
+        let json = await response.json();
+        printNotification(json, userHeader, searcherId);
+    }
+
+    function fileName( headers, iun, idx ) {
+
+        var contentTypeValue = "fake/bin";
+        for( let key of headers.keys() ) {
+            if("content-type" == key.toLowerCase()) {
+                contentDispositionValue = headers.get( key )                    
+            }
+        }
+
+        var ext = contentTypeValue.substr( contentTypeValue.indexOf('/')+1);
+        var fileName = iun + "_doc" + idx + "." + ext;
+
+        return fileName;
+    }
+
+    function prepareDownloadButton(json, userHeader, searcherId) {
+        jQuery('#download').on('click', (evt) => {
+            for (let i = 0; i < json.documents.length; i++) {
+                jQuery('#docs').append("<p><a id=\"doc_" + i + "\" href=\"#\"</a>Document#: " + i + "</a></p>");
+                prepareDocLink( json.iun, i, userHeader, searcherId)
+            }
+        })
+    }
+
+    function prepareDocLink( iun, idx , userHeader, searcherId) {
+        let jqEl = jQuery('#doc_' + idx);
+        let url = jQuery('meta[name="API-GW"]').attr('content') 
+        + "/delivery/notifications/received/" 
+        + iun 
+        + "/documents/" + idx;
+
+        let headers = {
+            'x-api-key': jQuery('#API-Key').val()
+        }
+        headers[userHeader] = searcherId
+
+        fetch(url, headers)
+        .then( res => res.blob()
+            .then( b => ({ res: res, blob: b })) 
+            )
+        .then( data => {
+            console.log( data );
+            var file = window.URL.createObjectURL( data.blob );
+            jqEl.attr('href', file);
+            jqEl.attr('download', fileName( data.res.headers, iun, idx) )
+        });
+    }
+
+    function printNotification(json, userHeader, searcherId) {
+        console.log(json);
+
+        jQuery('#container').text("");
+        jQuery('#container').append("<h1>Dettaglio Notifica</h1>");
+
+            // notification
+            jQuery('#container').append("<p class='h6'>" + "<b>Iun:</b> " + json.iun + "</p>");
+            jQuery('#container').append("<p class='h6'>" + "<b>Subject:</b> " + json.subject + "</p>");
+            jQuery('#container').append("<p class='h6'>" +  "<b>Protocol Number:</b> " + json.paNotificationId + "</p>");
+            jQuery('#container').append("<p class='h6'>" + " <b>Sent at:</b> " + json.sentAt + "</p>");
+            if (json.sender) {
+                jQuery('#container').append("<p class='h6'>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
+            }
+
+            //recipients
+            jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<h3>Recipients</h3>");
+            for (var i = 0; i < json.recipients.length; i++) {
+                let recipient = "";
+                recipient += "<b>Denomination:</b> " + json.recipients[i].denomination + " / <b>TaxId:</b> " + json.recipients[i].taxId;
+                recipient += " / <b>Digital Domicile:</b> " + json.recipients[i].digitalDomicile.address + " (" + json.recipients[i].digitalDomicile.type + ")";
+                recipient += " / <b>Physical Address:</b> " + json.recipients[i].physicalAddress.address + ", " + json.recipients[i].physicalAddress.municipality;
+                recipient += ", " + json.recipients[i].physicalAddress.province + ", " + json.recipients[i].physicalAddress.zip;
+                jQuery('#container').append("<p class='h6'>" + recipient + "</p>");
+            }
+            jQuery('#container').append("</p>");
+
+            // documents
+            jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<p class='h3'><b>Documents  </b><button class='btn btn-outline-dark' id=\"download\">Downloads</button></p><p id=\"docs\"></p>");
+            prepareDownloadButton(json, userHeader, searcherId)
+            
+
+            // status history
+            jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<p class='h3'><b>Status</b> " + json.notificationStatus + "</p>");
+            for (var i = 0; i < json.notificationStatusHistory.length; i++) {
+                let el = json.notificationStatusHistory[i];
+                jQuery('#container').append("<p class='h6'>Status: <b>" + el.status + "</b> since " + el.activeFrom + "</p>");
+            }
+            jQuery('#container').append("</p>");
+
+
+            // timeline
+            jQuery('#container').append("<p><hr></p>");
+            jQuery('#container').append("<h3>Timeline</h3>");
+
+            json.timeline.forEach(el => {
+                var content = "<ul class='list-group list-group-flush'> <li class='list-group-item list-group-item-dark'> <b> Since: </b>" + el.timestamp +  " <b>TaxId: </b>" + el.details.taxId +" <b>Status: </b>" +el.category + "</li> </ul>";
+                switch(el.category){
+                    case "RECEIVED_ACK": el.details.documentsDigests.forEach(digest => content += "<ul class='list-group list-group-flush'> <li class='list-group-item'> <b>Digest: </b>" +digest.sha256 + "</li> " ); content +="</ul>" ;break;
+                    case "NOTIFICATION_PATH_CHOOSE": {
+                        content += "<ul class='list-group list-group-flush'> " +
+                        "<li class='list-group-item'> <b>Delivery Mode: </b> " + el.details.deliveryMode +" </li>" +
+                        " <li class='list-group-item'> <b>Platform: </b>" + el.details.platform.address +
+                        " </li> <li class='list-group-item'> <b>Special: </b>" + el.details.special.address + "</li> <li class='list-group-item'> <b>General: </b>"+ el.details.general.address + "</li>";
+                        el.details.courtesyAddresses.forEach(courtesy => content += "<li class='list-group-item'> <b>Courtesy: </b>" +  courtesy.address + " </li> "); content +="</ul>"; break;
+                    }
+                    case "SEND_DIGITAL_DOMICILE": content += "<ul class='list-group list-group-flush'> " + 
+                    " <li class='list-group-item'> <b>Address Source: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
+                    " <li class='list-group-item'> <b>Address: </b>" + el.details.address.address + "</li> "+
+                    " </ul>"; break;
+                    case "SEND_DIGITAL_DOMICILE_FEEDBACK": content += "<ul class='list-group list-group-flush'> "+
+                    " <li class='list-group-item'> <b>Address Source: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
+                    " <li class='list-group-item'> <b>Address: </b>"+ el.details.address.address + "</li> "+
+                    " <li class='list-group-item'> <b>Result: </b>" + el.details.errors[0] + "</li> </ul>"; break;
+                }
+                jQuery('#container').append(content);
+            });
+        }
+    </script>
+    </html>

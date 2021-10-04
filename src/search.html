@@ -1,15 +1,15 @@
 <!doctype html>
-<html lang="it">
-<head>
-    <meta charset="utf-8">
-    <title>PN: Search</title>
-    <meta name="description" content="PN: Search">
-    <meta name="API-GW" content="${API_GW_BASE_URL}">
-    <script src="js/jquery-3.6.0.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
-</head>
-<body>
-    <style>
+    <html lang="it">
+    <head>
+        <meta charset="utf-8">
+        <title>PN: Search</title>
+        <meta name="description" content="PN: Search">
+        <meta name="API-GW" content="${API_GW_BASE_URL}">
+        <script src="js/jquery-3.6.0.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
+    </head>
+    <body>
+        <style>
         .notificationTable{
             width: 100%;
             border: 1px solid black;
@@ -25,60 +25,57 @@
         .element{
             border: 1px solid black;
         }
+        .inputForm {
+            width: 100%;
+        }
+        .inputText{
+            margin-top: 10pt;
+            width: 30%;
+            display: block;
+        }
+        .lableText {
+            margin-top: 10pt;
+            display: block;
+        }
         
     </style>
     <div>PN: Ricerca Notifiche</div>
-    <div>
+    <div class="inputForm">
         <form name="search">
-            <table border="0">
-                <tr>
-                    <td>API-KEY: </td>
-                    <td><input type="password" id="API-Key" value="" /><br></td>
-                </tr>
-                <tr>
-                    <td>USER ID: </td>
-                    <td><input type="text" name="txtUserId" id="txtUserId"></td>
-                </tr>
-                <tr>
-                    <td>Sender ID: </td>
-                    <td><input type="text" name="txtSenderId" id="txtSenderId"></td>
-                </tr>
-                <tr>
-                    <td>Start Date: </td>
-                    <td><input type="datetime" name="dtStartDate" id="dtStartDate"></td>
-                </tr>
-                <tr>
-                    <td>End Date: </td>
-                    <td><input type="datetime" name="dtEndDate" id="dtEndDate"></td>
-                </tr>
-                <tr>
-                    <td>Recipient ID: </td>
-                    <td><input type="text" name="txtRecipientId" id="txtRecipientId"></td>
-                </tr>
-                <tr>
-                    <td>Status: </td>
-                    <td><select type="text" name="txtStatus" id="txtStatus"> 
-                        <option selected="selected"></option>
-                        <option>RECEIVED_ACK</option>
-                        <option>NOTIFICATION_PATH_CHOOSE</option>
-                        <option>SEND_DIGITAL_DOMICILE</option>
-                        <option>SEND_DIGITAL_DOMICILE_FEEDBACK</option>
-                        <option>WAIT_FOR_RECIPIENT_TIMEOUT</option>
-                        <option>VIEWED</option>
-                        <option>PAYMENT</option>
-                     </select> </td>
-                </tr>
-                <tr>
-                    <td>Subject: </td>
-                    <td><input type="text" name="txtSubject" id="txtSubject"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="left"><input type="button" name="btnSearch" id="btnSearch" value="Ricerca"></td>
-                </tr>
-            </table>
+
+            <label class="labelText" for="API-Key"><b>API-KEY: </b></label>
+            <input class="inputText" type="password" name="API-Key" id="API-Key" required>
+
+            <label class="labelText" for="txtUserId"><b>USER ID: </b></label>
+            <input class="inputText" type="text" name="txtUserId" id="txtUserId">
+
+            <label class="labelText" for="txtSenderId"><b>Sender ID: </b></label>
+            <input class="inputText" type="text" name="txtSenderId" id="txtSenderId" required>
+
+            <label class="labelText" for="dtStartDate"><b>Start Date: </b></label>
+            <input class="inputText" type="datetime" name="dtStartDate" id="dtStartDate" placeholder="YYYY-MM-DDThh:mm:ss.SSSZ" required>
+
+            <label class="labelText" for="dtEndDate"><b>End Date: </b></label>
+            <input class="inputText" type="datetime" name="dtEndDate" id="dtEndDate" placeholder="YYYY-MM-DDThh:mm:ss.SSSZ" required>
+
+            <label class="labelText" for="txtRecipientId"><b>Recipient ID: </b></label>
+            <input class="inputText" type="text" name="txtRecipientId" id="txtRecipientId">
+
+            <label class="labelText" for="txtStatus"><b>Status: </b></label>
+            <select class="inputText" type="text" name="txtStatus" id="txtStatus"> 
+                <option selected="selected"></option>
+                <option>RECEIVED</option>
+                <option>DELIVERING</option>
+                <option>DELIVERED</option>
+                <option>VIEWED</option>
+                <option>EFFECTIVE_DATE</option>
+                <option>PAID</option>
+            </select>
+
+            <label for="txtSubject"><b>Subject: </b></label>
+            <input class="inputText" type="text" name="txtSubject" id="txtSubject" placeholder=".*{textToSearch}.*">
+
+            <button type="submit" name="btnSearch" id="btnSearch">Ricerca</button>
         </form>
     </div>
     
@@ -144,15 +141,14 @@
             jQuery('#container').text("");
 
             jQuery('#container').append("<b>Notification</b>");
-            //jQuery('#container').append("<pre>" + JSON.stringify( json, null, 2)+ "</pre>");
 
             var content = "<table class='notificationTable'> <tr class='row'> <th class='header'>IUN</th> <th class='header'>STATUS</th> <th class='header'>SENDERID</th> <th class='header'>SENTAT</th> <th class='header'>PANOTIFICATIONID</th> <th class='header'>RECIPIENTID</th> <th class='header'>SUBJECT</th> </tr>"
-                json.forEach(element => {
-                    content += "<tr class='row'> <td class='element'>" + element.iun + "</td><td class='element'>" +
-                         element.notificationStatus + "</td><td class='element'>" + element.senderId +
-                             "</td><td class='element'>" + element.sentAt + "</td><td class='element'>" +
-                                  element.paNotificationId + "</td><td class='element'>" + element.recipientId +
-                                     "</td><td class='element'>" + element.subject  + "</td> </tr>";
+            json.forEach(element => {
+                content += "<tr class='row'> <td class='element'>" + element.iun + "</td><td class='element'>" +
+                element.notificationStatus + "</td><td class='element'>" + element.senderId +
+                "</td><td class='element'>" + element.sentAt + "</td><td class='element'>" +
+                element.paNotificationId + "</td><td class='element'>" + element.recipientId +
+                "</td><td class='element'>" + element.subject  + "</td> </tr>";
             });
             content += "</table>"
             jQuery('#container').append(content); 

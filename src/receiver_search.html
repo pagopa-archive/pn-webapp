@@ -1,0 +1,241 @@
+<!doctype html>
+  <html lang="en">
+  <head>
+    <meta name="API-GW" content="${API_GW_BASE_URL}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="js/jquery-3.6.0.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    
+
+    <!-- Bootstrap CSS -->
+    <link href="js/bootstrap.min.css" rel="stylesheet">
+
+
+    <title>Destinatario: Ricerca Notifiche</title>
+  </head>
+  <body>
+    <style>
+    .row {
+      margin: 10pt;
+    }
+  </style>
+
+  <div class="container">
+    <h1>Destinatario: Ricerca Notifiche</h1>
+    <form class="row">
+      <div class="col-sm-1">
+        <label for="API-Key" class="col-form-label">API-KEY</label>
+      </div>
+      <div class="col-md-3">
+        <input type="password" class="form-control" id="API-Key">
+      </div>
+      <div class="col-auto">
+        <label for="API-Key" class="form-text">AWS API Key</label>
+      </div>
+    </form>
+
+    <form class="row align-items-center">
+      <div class="col-sm-1">
+        <label for="txtUserId" class="col-form-label">USER ID</label>
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" id="txtUserId">
+      </div>
+      <div class="col-auto">
+        <label for="txtUserId" class="form-text">Identificativo del richiedente</label>
+      </div>
+      <div class="col align-self-end">
+        <div class="row justify-content-md-end">
+          <div class="col-auto">
+            <label for="txtIun" class="col-form-label">IUN</label>
+          </div>
+          <div class="col-auto">
+            <input type="text" class="form-control" id="txtIun">
+          </div>
+          <div class="col-auto">
+            <label for="txtIun" class="form-text">Identificativo della notifica</label>
+          </div>
+          <div class="col-sm-1">
+            <button type="button" class="btn btn-outline-dark" name="btnDirectSearch" id="btnDirectSearch">Ricerca</button>
+          </div>
+        </div>
+      </div> 
+    </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <label for="dtStartDate" class="col-form-label">Start Date</label>
+        </div>
+        <div class="col-md-3">
+          <input type="datetime" class="form-control" id="dtStartDate" value="2021-09-01T00:00:00.000Z">
+        </div>
+        <div class="col-auto">
+          <label for="dtStartDate" class="form-text">YYYY-MM-DDThh:mm:ss.SSSZ</label>
+        </div>
+      </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <label for="dtEndDate" class="col-form-label">End Date</label>
+        </div>
+        <div class="col-md-3">
+          <input type="datetime" class="form-control" id="dtEndDate" value="2021-12-01T00:00:00.000Z">
+        </div>
+        <div class="col-auto">
+          <label for="dtEndDate" class="form-text">YYYY-MM-DDThh:mm:ss.SSSZ</label>
+        </div>
+      </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <label for="txtSenderId" class="col-form-label">Sender ID</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="txtSenderId">
+        </div>
+        <div class="col-auto">
+          <label for="txtSenderId" class="form-text">Identificativo mittente</label>
+        </div>
+      </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <label for="txtStatus" class="col-form-label">Status</label>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" aria-label="Default select example" name="txtStatus" id="txtStatus">
+            <option selected></option>
+            <option>RECEIVED</option>
+            <option>DELIVERING</option>
+            <option>DELIVERED</option>
+            <option>VIEWED</option>
+            <option>EFFECTIVE_DATE</option>
+            <option>PAID</option>
+          </select>
+        </div>
+        <div class="col-auto">
+          <label for="txtStatus" class="form-text">Stato della notifica</label>
+        </div>
+      </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <label for="txtSubject" class="col-form-label">Subject</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="txtSubject">
+        </div>
+        <div class="col-auto">
+          <label for="txtSubject" class="form-text">.*{textToSearch}.*</label>
+        </div>
+      </form>
+
+      <form class="row">
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-outline-dark" name="btnSearch" id="btnSearch">Ricerca</button>
+        </div>
+      </form>
+
+    </div>
+
+    <br/><br/>
+    <div id="container" class=container>
+    </div>
+
+    <script type="text/javascript">
+      jQuery(document).ready(function(){
+        let apiKey = localStorage.getItem("apiKey");
+        if(apiKey)
+        {
+         jQuery('#API-Key').val(apiKey);
+       }
+       jQuery('#API-Key').change( (evt) => {
+        let apiKey = jQuery('#API-Key').val();
+        localStorage.setItem("apiKey", apiKey);
+      });
+       jQuery('#btnSearch').click(function(){
+        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/received?';
+        let senderId = jQuery('#txtSenderId').val();
+        let startDate = jQuery('#dtStartDate').val();
+        let endDate = jQuery('#dtEndDate').val();
+        let recipientId = jQuery('#txtUserId').val();
+        let status = jQuery('#txtStatus').val();
+        let subjectRegExp = jQuery('#txtSubject').val();
+
+        if(!recipientId || !startDate || !endDate) {
+          alert('Please specify Recipient ID, Start Date and End Date field');
+          return;
+        }
+
+
+        let url = addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp);
+        console.log(url);
+        fetchNotification(url, recipientId);
+      });
+     });
+
+      async function fetchNotification(url, userId) {
+        let apiKey = jQuery('#API-Key').val()
+        let request = {
+          method: 'GET',
+          cache: 'no-cache',
+          headers: {
+            'X-PagoPA-User-Id': userId,
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey
+          }
+        }
+
+        let response = await fetch(url, request);
+
+        if (!response.ok) {
+          alert('An error has occured: ${response.status}');
+          return;
+        }
+
+        let json = await response.json();
+        printNotification(json);
+      }
+
+      function addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp) {
+        var url = new URL(endPoint);
+        url.searchParams.append('recipientId', recipientId);
+        url.searchParams.append('startDate', startDate);
+        url.searchParams.append('endDate', endDate);
+        if(senderId) url.searchParams.append('senderId', senderId);
+        if(status) url.searchParams.append('status', status);
+        if(subjectRegExp) url.searchParams.append('subjectRegExp', subjectRegExp);
+        return url;
+      }
+
+      function printNotification(json) {
+        console.log(json);
+        jQuery('#container').text("");
+
+        jQuery('#container').append("<h3>Notification</h3>");
+        
+            var content = "<table class='table'> <thead> <tr> <th scope='col'>IUN</th>  <th scope='col'>STATUS</th>  <th scope='col'>SENTAT</th> <th scope='col'>PANOTIFICATIONID</th> <th scope='col'>SENDERID</th> <th scope='col'>SUBJECT</th> </tr> </thead> <tbody>"
+            json.forEach(element => {
+              content += "<tr> <td>" + element.iun + "</td>"+
+              "<td>" + element.notificationStatus + "</td>"+
+              "<td>" + element.sentAt + "</td>"+
+              "<td>" + element.paNotificationId + "</td>"+
+              "<td>" + element.senderId +"</td>"+
+              "<td>" + element.subject  + "</td>"+
+              "<td> <a type='button' class='btn btn-outline-dark' href='notification_details.html?iun=" + element.iun +"&searcherId=" + element.recipientId +"&role=receiver'>Dettagli</a> </td> </tr>";
+            });
+            content += "</tbody> </table>"
+            jQuery('#container').append(content); 
+          }
+
+          jQuery( "#btnDirectSearch" ).click(function() {
+            console.log("direct search");
+            let iun = jQuery('#txtIun').val();
+            let userid = jQuery('#txtUserId').val();
+            window.location = "notification_details.html?iun=" + iun + "&searcherId" + userid + "&role=receiver"
+          });
+        </script>
+      </body>
+      </html>
+
