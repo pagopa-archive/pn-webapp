@@ -41,6 +41,9 @@
         .row {
             margin: 10pt;
         }
+        .legal_facts {
+            margin-left: 315px;
+        }
         /*.list-group {
             margin-left: -30px;
             background-color: lightgray;
@@ -58,7 +61,7 @@
 </div> -->
 
 <div class="container container-top fixed-top">
-    
+
 
     <form class="row justify-content-md-center">
       <div class="col-sm-1">
@@ -77,7 +80,25 @@
 </div>
 <div id='space' class='container'></div>
 <br/><br/>
-<div id="container" class='container'></div>
+<div class='container'>
+    <div id='notification'></div>
+    <div id='recipients'></div>
+    <div id='documents'>
+        <p><hr></p>
+        <div class='row'>
+            <div class='h3 col-sm-2 align-self-start' >Attachments:  </div>
+            <button class='btn btn-outline-dark col-sm-1' id=download>Show</button>
+            <div class='h3 col-sm-2 align-self-end legal_facts' id='legalfacts'>Legal Facts: </div>
+        </div>
+        <div class='row'>
+            <div class='col align-self-start' id='docs'></div>
+            <div class='col align-self-end' id='legalfactsList'> </div>
+        </div>
+
+    </div>
+    <div id='status'></div>
+    <div id='timeline'></div>
+</div>
 
 </body>
 <script type="text/javascript">
@@ -85,18 +106,17 @@
         let apiKey = localStorage.getItem("apiKey");
         if(apiKey)
         {
-           jQuery('#API-Key').val(apiKey);
-       }
-       jQuery('#API-Key').change( (evt) => {
+         jQuery('#API-Key').val(apiKey);
+     }
+     jQuery('#API-Key').change( (evt) => {
         let apiKey = jQuery('#API-Key').val();
         localStorage.setItem("apiKey", apiKey);
     });
-       let iun = (new URL(location.href)).searchParams.get('iun');
-       let searcherId = (new URL(location.href)).searchParams.get('searcherId');
-       let role = (new URL(location.href)).searchParams.get('role');
-       jQuery('#txtUserId').val(searcherId);
-       console.log((new URL(location.href)).searchParams.get('iun'));
-       jQuery('#btnDownload').click(function(){
+     let iun = (new URL(location.href)).searchParams.get('iun');
+     let searcherId = (new URL(location.href)).searchParams.get('searcherId');
+     let role = (new URL(location.href)).searchParams.get('role');
+     jQuery('#txtUserId').val(searcherId);
+     jQuery('#btnDownload').click(function(){
         let userHeader;
         let userEndPoint;
         if(role && role == "sender")
@@ -112,13 +132,13 @@
         let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/'+ userEndPoint + '/';
         let url = endPoint + iun;
         fetchNotification(url, searcherId, role, userHeader);
+        fetchLegalFacts(url, searcherId, userEndPoint, userHeader);
     });
-       jQuery('#btnDownload').click();
-   });
+     jQuery('#btnDownload').click();
+ });
 
     async function fetchNotification(url, searcherId, role, userHeader) {
 
-        console.log(url,searcherId,role,userHeader);
         let apiKey = jQuery('#API-Key').val();
         let request = {
             method: 'GET',
@@ -141,6 +161,31 @@
         printNotification(json, userHeader, searcherId);
     }
 
+    async function fetchLegalFacts(url, searcherId, userEndPoint, userHeader) {
+
+        url += "/legalfacts/";
+        let apiKey = jQuery('#API-Key').val();
+        let request = {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey
+            }
+        }
+        request.headers[userHeader] = searcherId;
+
+        let response = await fetch(url, request);
+
+        if (!response.ok) {
+            alert('An error has occured: ${response.status}');
+            return;
+        }
+
+        let json = await response.json();
+        printLegalFacts( searcherId, userEndPoint, userHeader, json);
+    }
+
     function fileName( headers, iun, idx ) {
 
         var contentTypeValue = "fake/bin";
@@ -158,14 +203,16 @@
 
     function prepareDownloadButton(json, userHeader, searcherId) {
         jQuery('#download').on('click', (evt) => {
+            jQuery('#docs').empty();
             for (let i = 0; i < json.documents.length; i++) {
-                jQuery('#docs').append("<p><a id=\"doc_" + i + "\" href=\"#\"</a>Document#: " + i + "</a></p>");
+                jQuery('#docs').append("<div class='col-auto' ><a id=\"doc_" + i + "\" href=\"#\"</a>Document#: " + i + "</a></div>");
                 prepareDocLink( json.iun, i, userHeader, searcherId)
             }
         })
     }
 
     function prepareDocLink( iun, idx , userHeader, searcherId) {
+
         let jqEl = jQuery('#doc_' + idx);
         let url = jQuery('meta[name="API-GW"]').attr('content') 
         + "/delivery/notifications/received/" 
@@ -177,7 +224,7 @@
         }
         headers[userHeader] = searcherId
 
-        fetch(url, headers)
+        fetch(url, {headers})
         .then( res => res.blob()
             .then( b => ({ res: res, blob: b })) 
             )
@@ -189,53 +236,94 @@
         });
     }
 
-    function printNotification(json, userHeader, searcherId) {
-        console.log(json);
+    function printLegalFacts(searcherId, userEndPoint, userHeader, json) {
 
-        jQuery('#container').text("");
-        jQuery('#container').append("<h1>Dettaglio Notifica</h1>");
+        let iun = (new URL(location.href)).searchParams.get('iun');
+        jQuery('#legalfactsList').empty();
+        for (let i = 0; i < json.length; i++) {
+            var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> " +
+            "<b>Name: </b>" + json[i].id +
+            "<b> Type: </b>" + json[i].type +
+            "<b>  </b>" +   
+            "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
+            jQuery('#legalfactsList').append(content);
+            prepareDownloadLink(searcherId ,iun, i, json[i].id, userEndPoint, userHeader);
+        }
+    }
+
+    function prepareDownloadLink(searcherId ,iun, idx, fileId, userEndPoint, userHeader) {
+
+        let jqEl = jQuery('#download_' + idx);
+        let url = jQuery('meta[name="API-GW"]').attr('content') 
+        + "/delivery/notifications/" 
+        + userEndPoint + "/" 
+        + iun 
+        + "/legalfacts/" + fileId;
+
+        let headers = {
+            'x-api-key': jQuery('#API-Key').val()
+        }
+        headers[userHeader] = searcherId
+
+        fetch(url, {headers})
+        .then( res => res.blob()
+            .then( b => ({ res: res, blob: b })) 
+            )
+        .then( data => {
+            console.log( data );
+            var file = window.URL.createObjectURL( data.blob );
+            jqEl.attr('href', file);
+            jqEl.attr('download', fileName( data.res.headers, iun, fileId) )
+        });
+    }
+
+    function printNotification(json, userHeader, searcherId) {
+
+        jQuery('#notification').empty();
+        jQuery('#notification').append("<h1>Dettaglio Notifica</h1>");
 
             // notification
-            jQuery('#container').append("<p class='h6'>" + "<b>Iun:</b> " + json.iun + "</p>");
-            jQuery('#container').append("<p class='h6'>" + "<b>Subject:</b> " + json.subject + "</p>");
-            jQuery('#container').append("<p class='h6'>" +  "<b>Protocol Number:</b> " + json.paNotificationId + "</p>");
-            jQuery('#container').append("<p class='h6'>" + " <b>Sent at:</b> " + json.sentAt + "</p>");
+            jQuery('#notification').append("<p class='h6'>" + "<b>Iun:</b> " + json.iun + "</p>");
+            jQuery('#notification').append("<p class='h6'>" + "<b>Subject:</b> " + json.subject + "</p>");
+            jQuery('#notification').append("<p class='h6'>" +  "<b>Protocol Number:</b> " + json.paNotificationId + "</p>");
+            jQuery('#notification').append("<p class='h6'>" + " <b>Sent at:</b> " + json.sentAt + "</p>");
             if (json.sender) {
-                jQuery('#container').append("<p class='h6'>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
+                jQuery('#notification').append("<p class='h6'>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
             }
 
             //recipients
-            jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<h3>Recipients</h3>");
+            jQuery('#recipients').empty();
+            jQuery('#recipients').append("<p><hr></p>");
+            jQuery('#recipients').append("<h3>Recipients</h3>");
             for (var i = 0; i < json.recipients.length; i++) {
                 let recipient = "";
                 recipient += "<b>Denomination:</b> " + json.recipients[i].denomination + " / <b>TaxId:</b> " + json.recipients[i].taxId;
                 recipient += " / <b>Digital Domicile:</b> " + json.recipients[i].digitalDomicile.address + " (" + json.recipients[i].digitalDomicile.type + ")";
                 recipient += " / <b>Physical Address:</b> " + json.recipients[i].physicalAddress.address + ", " + json.recipients[i].physicalAddress.municipality;
                 recipient += ", " + json.recipients[i].physicalAddress.province + ", " + json.recipients[i].physicalAddress.zip;
-                jQuery('#container').append("<p class='h6'>" + recipient + "</p>");
+                jQuery('#recipients').append("<p class='h6'>" + recipient + "</p>");
             }
-            jQuery('#container').append("</p>");
+            jQuery('#recipients').append("</p>");
 
-            // documents
-            jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<p class='h3'><b>Documents  </b><button class='btn btn-outline-dark' id=\"download\">Downloads</button></p><p id=\"docs\"></p>");
-            prepareDownloadButton(json, userHeader, searcherId)
+            
+            prepareDownloadButton(json, userHeader, searcherId);
             
 
             // status history
-            jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<p class='h3'><b>Status</b> " + json.notificationStatus + "</p>");
+            jQuery('#status').empty();
+            jQuery('#status').append("<p><hr></p>");
+            jQuery('#status').append("<p class='h3'>Status: " + json.notificationStatus + "</p>");
             for (var i = 0; i < json.notificationStatusHistory.length; i++) {
                 let el = json.notificationStatusHistory[i];
-                jQuery('#container').append("<p class='h6'>Status: <b>" + el.status + "</b> since " + el.activeFrom + "</p>");
+                jQuery('#status').append("<p class='h6'>Status: <b>" + el.status + "</b> since " + el.activeFrom + "</p>");
             }
-            jQuery('#container').append("</p>");
+            jQuery('#status').append("</p>");
 
 
             // timeline
-            jQuery('#container').append("<p><hr></p>");
-            jQuery('#container').append("<h3>Timeline</h3>");
+            jQuery('#timeline').empty();
+            jQuery('#timeline').append("<p><hr></p>");
+            jQuery('#timeline').append("<h3>Timeline</h3>");
 
             json.timeline.forEach(el => {
                 var content = "<ul class='list-group list-group-flush'> <li class='list-group-item list-group-item-dark'> <b> Since: </b>" + el.timestamp +  " <b>TaxId: </b>" + el.details.taxId +" <b>Status: </b>" +el.category + "</li> </ul>";
@@ -257,7 +345,7 @@
                     " <li class='list-group-item'> <b>Address: </b>"+ el.details.address.address + "</li> "+
                     " <li class='list-group-item'> <b>Result: </b>" + el.details.errors[0] + "</li> </ul>"; break;
                 }
-                jQuery('#container').append(content);
+                jQuery('#timeline').append(content);
             });
         }
     </script>
