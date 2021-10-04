@@ -2,114 +2,227 @@
 <html lang="it">
 <head>
     <meta charset="utf-8">
-    <title>PN: Pubblica Amministrazione</title>
+    <title>Mittente: Nuova Notifica</title>
     <meta name="description" content="PN: Pubblica Amministrazione">
     <meta name="API-GW" content="${API_GW_BASE_URL}">
     <script src="js/jquery-3.6.0.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+
+    <link href="js/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
 </head>
 <body>
-    <p>PN: Pubblica Amministrazione</p>
-    <p>
-        Fill<br>
-        the api-key secret <input type="password" id="API-Key" value="" />,<br>
-        the PA id <input type="text" id="paId" value="" />,<br>
-        the protocol number <input type="text" id="paNotificationId" value="" />,<br>
-        and the subject <input type="text" id="subject" value="" />.<br>
-    </p>
-    <p>
-        Attach Files<br>
-        <input type="checkbox" id="file-check1"><input class="doc" type="file" id="file-input1" data-idx="0" /><br>
-        <input type="checkbox" id="file-check2"><input class="doc" type="file" id="file-input2" data-idx="1" /><br>
-        <input type="checkbox" id="file-check3"><input class="doc" type="file" id="file-input3" data-idx="2" /><br>
-        <input type="checkbox" id="file-check4"><input class="doc" type="file" id="file-input4" data-idx="3" /><br>
-    </p>
-    <p id="recipients">
-        Select Recipients<br>
-    </p>
-    <p>
-        Then <button id="btn">Direct load</button> <br>
-        or <button id="preload">Preload File</button> and <button id="notify">Confirm notification</button> <br>
-    </p>
-    <div id="output">
+<style>
+.row {
+    margin: 10pt;
+}
+.toast {
+    left: 50%;
+    right: 50%;
+    position: fixed;
+    z-index: 9999;
+    margin-top: 250pt;
+    background-color: white;
+    width: 600px;
+}
+</style>
 
+<div class='toast' role='alert' aria-live='assertive' aria-atomic='true'>
+    <div class='d-flex'>
+        <div class='toast-body'></div>
+        <button type='button' class='btn-close me-2 m-auto'data-bs-dismiss='toast' aria-label='Close' id="closeToast"></button>
     </div>
+</div>
+
+<div class="container">
+
+    <h1>Mittente: Nuova Notifica</h1>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="API-Key" class="col-form-label">API-KEY</label>
+        </div>
+        <div class="col-md-3">
+          <input type="password" class="form-control" id="API-Key">
+        </div>
+        <div class="col-auto">
+          <label for="API-Key" class="form-text">AWS API Key</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="paId" class="col-form-label">PA ID</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="paId">
+        </div>
+        <div class="col-auto">
+          <label for="paId" class="form-text">Identificativo della PA</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="paNotificationId" class="col-form-label"># Protocol</label>
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control" id="paNotificationId">
+        </div>
+        <div class="col-auto">
+          <label for="paNotificationId" class="form-text">Numero di protocollo</label>
+        </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-1">
+          <label for="subject" class="col-form-label">Subject</label>
+      </div>
+      <div class="col-md-3">
+          <input type="text" class="form-control" id="subject">
+      </div>
+      <div class="col-auto">
+          <label for="subject" class="form-text">Descrizione notifica</label>
+      </div>
+    </form>
+
+    <h3>Attach Files</h3>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check1">
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input1" data-idx="0"/>
+        </div>
+        <div class="col-auto">
+
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check2"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input2" data-idx="1"/>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check3"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input3" data-idx="2"/>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto align-self-center">
+            <input class="form-check-input" type="checkbox" value="" id="file-check4"/>
+        </div>
+        <div class="col-auto">
+            <input class="doc form-control" type="file" id="file-input4" data-idx="3"/>
+        </div>
+    </form>
+
+    <h3>Select Recipients</h3>
+    <div id="recipients"> </div>
+
+    <form class="row">
+        <div class="col-auto">
+          <button type="button" class="btn btn-outline-dark" name="btn" id="btn">Call API-GW</button>
+        </div>
+    </form>
+    <form class="row">
+        <div class="col-auto">
+            <button type="button" class="btn btn-outline-dark" name="btn" id="preload">Preload</button>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-outline-dark" name="btn" id="notify">Notify</button>
+        </div>
+    </form>
+
+    <div id="result">
+        <h3>Response</h3>
+    </div>
+</div>
 </body>
 <script>
-let RECIPIENT_DATA = {
-    "CGNNMO80A01H501M" : {
-        taxId: "CGNNMO80A01H501M",
-        denomination: "Nome1 Cognome1",
-        pecAddress: "nome1.cognome1@fail-both.domicilio-digitale.it"
-    },
-    "CGNNMO80A02H501R" : {
-        taxId: "CGNNMO80A02H501R",
-        denomination: "Nome2 Cognome2",
-        pecAddress: "nome2.cognome2@fail-first.domicilio-digitale.it"
-    },
-    "CGNNMO80A03H501T" : {
-        taxId: "CGNNMO80A03H501T",
-        denomination: "Nome3 Cognome3",
-        pecAddress: "nome3.cognome3@fail-first.domicilio-digitale.it"
+    let RECIPIENT_DATA = {
+        "CGNNMO80A01H501M" : {
+            taxId: "CGNNMO80A01H501M",
+            denomination: "Nome1 Cognome1",
+            pecAddress: "nome1.cognome1@fail-both.domicilio-digitale.it"
+        },
+        "CGNNMO80A02H501R" : {
+            taxId: "CGNNMO80A02H501R",
+            denomination: "Nome2 Cognome2",
+            pecAddress: "nome2.cognome2@fail-first.domicilio-digitale.it"
+        },
+        "CGNNMO80A03H501T" : {
+            taxId: "CGNNMO80A03H501T",
+            denomination: "Nome3 Cognome3",
+            pecAddress: "nome3.cognome3@fail-first.domicilio-digitale.it"
+        }
     }
-}
-let DATA = {
-    files: []
-}
+    let DATA = {
+        files: []
+    }
 
-function unit8ToHexString( arrayBuffer ) {
-    let dv = new DataView( arrayBuffer );
+    function unit8ToHexString( arrayBuffer ) {
+        let dv = new DataView( arrayBuffer );
 
-    return Array( arrayBuffer.byteLength )
+        return Array( arrayBuffer.byteLength )
         .fill()
         .map( (x, idx) => dv.getUint8(idx) )
         .map( el => { let str = el.toString(16); if(str.length == 1 ) str = '0'+str; return str} )
         .join('');
-}
-
-function logMessage( msgString ) {
-    jQuery('#output').prepend( '<pre><b>' + (new Date()) + '</b> '+ msgString + '</pre>\n' )
-}
-function fillSelects() {
-    let idx = 1;
-    for( let key of Object.keys( RECIPIENT_DATA ) ) {
-        let info = RECIPIENT_DATA[key];
-        jQuery('#recipients')
-            .append('<input type="checkbox" id="recipient-check' + (idx++) + '" data-tax-id="' + info.taxId + '">' 
-                            + info.taxId + ' ' + info.denomination + ' ' + info.pecAddress + '<br>');
     }
-    jQuery("select.recipient").each( ( idx, el) => {
-        jEl = jQuery(el);
-        
-    })
-}
 
-
-function readSingleFile( evtTarget, idx) {
-  var file = evtTarget.files[0];
-  if (!file) {
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var contents = e.target.result;
-    var parts = contents.split(";base64,");
-    
-    var fileBody = parts[1];
-    var contentType = parts[0].substring( "data:".length, parts[0].length )
-    DATA.files[ idx ] = {
-        body: fileBody,
-        contentType: contentType
+    function logMessage( msgString ) {
+        jQuery('.toast-body').append( msgString + '<br>');
+        jQuery('.toast').toast('show');
     }
-    
-    //console.log( { "body": fileBody, "contentType": contentType } );
-    logMessage("File selected")
-  };
-  reader.readAsDataURL(file);
+
+    function fillSelects() {
+        let idx = 1;
+        for( let key of Object.keys( RECIPIENT_DATA ) ) {
+            let info = RECIPIENT_DATA[key];
+            let content = "<form class='row'> <div class='col-auto align-self-center'> <input class='form-check-input' type='checkbox' value='' id='recipient-check" + (idx++) +"' data-tax-id='" +info.taxId + "'></div><div class='col-auto'><label class='col-form-label'> "+ info.taxId + " " + info.denomination + " " + info.pecAddress +"</label> </div></form>"
+            jQuery('#recipients')
+            .append(content);
+        }
+        jQuery("select.recipient").each( ( idx, el) => {
+            jEl = jQuery(el);
+
+        })
+    }
+
+    function readSingleFile( evtTarget, idx) {
+      var file = evtTarget.files[0];
+      if (!file) {
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var contents = e.target.result;
+        var parts = contents.split(";base64,");
+
+        var fileBody = parts[1];
+        var contentType = parts[0].substring( "data:".length, parts[0].length )
+        DATA.files[ idx ] = {
+            body: fileBody,
+            contentType: contentType
+        }
+        logMessage("File selected")
+    };
+    reader.readAsDataURL(file);
 }
 
+function printResponse(json) {
+    console.log(json);
 
+    jQuery('#result').append("<form class='row'> <div class='col-auto'><h5>Timestamp: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>#Protocol: </h5>" + json.paNotificationId + "</div></form>");
 
+}
 
 async function sendNotification() {
     let url = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/sent'
@@ -119,12 +232,12 @@ async function sendNotification() {
     let subject = jQuery('#subject').val()
 
     let requestBody = {
-            paNotificationId: paNotificationId,
-            subject: subject,
-            cancelledIun: null,
-            recipients: [],
-            documents: []
-        };
+        paNotificationId: paNotificationId,
+        subject: subject,
+        cancelledIun: null,
+        recipients: [],
+        documents: []
+    };
     for( let i = 1; i <= 4; i++ ) {
         if( jQuery('#file-check'+i).is(':checked') ) {
             let f = DATA.files[i-1];
@@ -162,8 +275,6 @@ async function sendNotification() {
         }
     }
 
-    console.log( "Request body", requestBody );
-
     let request = {
         method: 'POST',
         cache: 'no-cache',
@@ -174,7 +285,7 @@ async function sendNotification() {
         },
         body: JSON.stringify( requestBody )
     }
-    console.log( "Send request", request);
+
     let response = await fetch( url, request);
 
     let json = await response.json();
@@ -191,8 +302,12 @@ jQuery(() => {
 
     jQuery('#btn').click( (evt) => {
         sendNotification().then( msg => {
-            logMessage( JSON.stringify(msg) );
+            printResponse(msg);
         })
+    });
+
+    jQuery('#closeToast').click( (evt) => {
+       jQuery('.toast-body').empty();
     });
 })
 </script>
@@ -325,7 +440,7 @@ jQuery(() => {
     })
     jQuery("#notify").click( (evt) => {
         confirmNotification().then( msg => {
-            logMessage( JSON.stringify(msg) );
+            printResponse( msg );
         })
     })
 })
