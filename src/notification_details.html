@@ -109,7 +109,7 @@
             userHeader = 'X-PagoPA-User-Id'
             userEndPoint = "received";
         }
-        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/'+ userEndPoint + '/';
+        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + 'delivery/notifications/'+ userEndPoint + '/';
         let url = endPoint + iun;
         fetchNotification(url, searcherId, role, userHeader);
     });
