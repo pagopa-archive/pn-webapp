@@ -11,7 +11,7 @@ PN_DELIVERY_URL=http://localhost:8080/
 LPC_PORT=8095
 HTTP_SERVER_PORT=8090
 
-export API_GW_BASE_URL=http://localhost:${LPC_PORT}/proxy
+export API_GW_BASE_URL=http://localhost:${LPC_PORT}/proxy/
 mkdir -p dist 
 envsub src/index.html dist/index.html
 envsub src/notification_details.html dist/notification_details.html
