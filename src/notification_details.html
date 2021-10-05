@@ -42,15 +42,10 @@
             margin: 10pt;
         }
         .legal_facts {
-            margin-left: 315px;
+            margin-left: 333px;
         }
-        /*.list-group {
-            margin-left: -30px;
-            background-color: lightgray;
-            }*/
-
-        </style>
-        
+    </style>
+    
     <!--
     <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
         scarica
@@ -106,17 +101,17 @@
         let apiKey = localStorage.getItem("apiKey");
         if(apiKey)
         {
-           jQuery('#API-Key').val(apiKey);
-       }
-       jQuery('#API-Key').change( (evt) => {
+         jQuery('#API-Key').val(apiKey);
+     }
+     jQuery('#API-Key').change( (evt) => {
         let apiKey = jQuery('#API-Key').val();
         localStorage.setItem("apiKey", apiKey);
     });
-       let iun = (new URL(location.href)).searchParams.get('iun');
-       let searcherId = (new URL(location.href)).searchParams.get('searcherId');
-       let role = (new URL(location.href)).searchParams.get('role');
-       jQuery('#txtUserId').val(searcherId);
-       jQuery('#btnDownload').click(function(){
+     let iun = (new URL(location.href)).searchParams.get('iun');
+     let searcherId = (new URL(location.href)).searchParams.get('searcherId');
+     let role = (new URL(location.href)).searchParams.get('role');
+     jQuery('#txtUserId').val(searcherId);
+     jQuery('#btnDownload').click(function(){
         let userHeader;
         let userEndPoint;
         if(role && role == "sender")
@@ -134,8 +129,8 @@
         fetchNotification(url, searcherId, userEndPoint, userHeader);
         fetchLegalFacts(url, searcherId, userEndPoint, userHeader);
     });
-       jQuery('#btnDownload').click();
-   });
+     jQuery('#btnDownload').click();
+ });
 
     async function fetchNotification(url, searcherId, userEndPoint, userHeader) {
 
@@ -183,7 +178,23 @@
         }
 
         let json = await response.json();
+        orderLegalFacts(json);
         printLegalFacts( searcherId, userEndPoint, userHeader, json);
+    }
+
+    function orderLegalFacts(json) {
+
+        json.forEach(el => {
+            switch(el.type){
+                case "SENDER_ACK": el.idx = 1; break;
+                case "DIGITAL_DELIVERY": el.idx = 2; break;
+                case "ANALOG_DELIVERY": el.idx = 3; break;
+                case "RECIPIENT_ACCESS": el.idx = 4; break;
+            }
+        });
+        json.sort(function (a,b) {
+            return a.idx - b.idx;
+        });
     }
 
     function fileName( headers, iun, idx ) {
@@ -238,12 +249,16 @@
     }
 
     function printLegalFacts(searcherId, userEndPoint, userHeader, json) {
-
+        
         let iun = (new URL(location.href)).searchParams.get('iun');
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
-            var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> " +
-            "<b>File Name: </b>" + json[i].legalFactId +
+            var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> "+
+            "<b> Type: </b>" + json[i].type;
+            if(json[i].type != 'SENDER_ACK') {
+                content += "<b> Tax Id: </b>" + json[i].taxId
+            }
+            content += "<b> </b>" +
             "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
             jQuery('#legalfactsList').append(content);
             prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader);
