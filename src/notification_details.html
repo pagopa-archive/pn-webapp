@@ -124,7 +124,7 @@
             userHeader = 'X-PagoPA-User-Id'
             userEndPoint = "received";
         }
-        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/notifications/'+ userEndPoint + '/';
+        let endPoint = jQuery('meta[name="API-GW"]').attr('content') + 'delivery/notifications/'+ userEndPoint + '/';
         let url = endPoint + iun;
         fetchNotification(url, searcherId, userEndPoint, userHeader);
         fetchLegalFacts(url, searcherId, userEndPoint, userHeader);
@@ -261,11 +261,13 @@
             content += "<b> </b>" +
             "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
             jQuery('#legalfactsList').append(content);
-            prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader);
+            let fileName = iun + "__" + json[i].type + (  json[i].taxId ? "_"+json[i].taxId : "");
+
+            prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader, fileName);
         }
     }
 
-    function prepareDownloadLink(searcherId ,iun, idx, fileId, userEndPoint, userHeader) {
+    function prepareDownloadLink(searcherId ,iun, idx, fileId, userEndPoint, userHeader, fileName) {
 
         let jqEl = jQuery('#download_' + idx);
         let url = jQuery('meta[name="API-GW"]').attr('content') 
@@ -287,7 +289,7 @@
             //console.log( data );
             var file = window.URL.createObjectURL( data.blob );
             jqEl.attr('href', file);
-            jqEl.attr('download', fileName( data.res.headers, iun, fileId) )
+            jqEl.attr('download', fileName || fileName( data.res.headers, iun, fileId) )
         });
     }
 
