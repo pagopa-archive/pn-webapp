@@ -47,13 +47,13 @@
           <input type="password" class="form-control" id="API-Key">
         </div>
         <div class="col-auto">
-          <label for="API-Key" class="form-text">AWS API Key</label>
+          <label for="API-Key" class="form-text">API Key di AWS</label>
         </div>
     </form>
 
     <form class="row">
         <div class="col-sm-1">
-          <label for="paId" class="col-form-label">PA ID</label>
+          <label for="paId" class="col-form-label">ID PA</label>
         </div>
         <div class="col-md-3">
           <input type="text" class="form-control" id="paId">
@@ -65,7 +65,7 @@
 
     <form class="row">
         <div class="col-sm-1">
-          <label for="paNotificationId" class="col-form-label"># Protocol</label>
+          <label for="paNotificationId" class="col-form-label">Protocollo</label>
         </div>
         <div class="col-md-3">
           <input type="text" class="form-control" id="paNotificationId">
@@ -77,7 +77,7 @@
 
     <form class="row">
         <div class="col-sm-1">
-          <label for="subject" class="col-form-label">Subject</label>
+          <label for="subject" class="col-form-label">Descrizione</label>
       </div>
       <div class="col-md-3">
           <input type="text" class="form-control" id="subject">
@@ -87,7 +87,7 @@
       </div>
     </form>
 
-    <h3>Attach Files</h3>
+    <h3>Allega Files</h3>
     <form class="row">
         <div class="col-auto align-self-center">
             <input class="form-check-input" type="checkbox" value="" id="file-check1">
@@ -124,23 +124,23 @@
         </div>
     </form>
 
-    <h3>Select Recipients</h3>
+    <h3>Seleziona Destinatari</h3>
     <div id="recipients"> </div>
 
     <form class="row">
         <div class="col-auto">
-          <button type="button" class="btn btn-outline-dark" name="btn" id="btn">Call API-GW</button>
+          <button type="button" class="btn btn-outline-dark" name="btn" id="btn">Invia Notifica e Allegati</button>
         </div>
     </form>
     <form class="row">
         <div class="col-auto">
-            <button type="button" class="btn btn-outline-dark" name="btn" id="preload">Preload</button>
+            <button type="button" class="btn btn-outline-dark" name="btn" id="preload">Precarica Allegati</button>
         </div>
         <div class="col-auto">
-            <button type="button" class="btn btn-outline-dark" name="btn" id="notify">Notify</button>
+            <button type="button" class="btn btn-outline-dark" name="btn" id="notify">Invia Notifica</button>
         </div>
     </form>
-    <h3>Response</h3>
+    <h3>Risposta</h3>
     <div id="result"></div>
 </div>
 </body>
@@ -229,7 +229,7 @@
 
 function printResponse(json) {
 
-    jQuery('#result').prepend("<form class='row'> <div class='col-auto'><h5>Timestamp: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>#Protocol: </h5>" + json.paNotificationId + "</div></form>");
+    jQuery('#result').prepend("<form class='row'> <div class='col-auto'><h5>Data: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>Protocollo: </h5>" + json.paNotificationId + "</div></form>");
 }
 
 async function sendNotification() {
@@ -364,7 +364,7 @@ async function preloadFiles() {
             f.sha256 = unit8ToHexString( sha256 );
             console.log("Updated file info ", f);
 
-            logMessage( "Preloaded file " + f.key + " with sha256 " + f.sha256 + " and version " + f.versionId );
+            logMessage( "Caricato file: " + f.key + " con sha256: " + f.sha256 + " e versione: " + f.versionId );
         }
     }
 }
