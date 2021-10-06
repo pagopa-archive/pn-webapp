@@ -31,13 +31,13 @@
         <input type="password" class="form-control" id="API-Key">
       </div>
       <div class="col-auto">
-        <label for="API-Key" class="form-text">AWS API Key</label>
+        <label for="API-Key" class="form-text">API Key di AWS</label>
       </div>
     </form>
 
     <form class="row align-items-center">
       <div class="col-sm-1">
-        <label for="txtUserId" class="col-form-label">USER ID</label>
+        <label for="txtUserId" class="col-form-label">ID Utente</label>
       </div>
       <div class="col-md-3">
         <input type="text" class="form-control" id="txtUserId">
@@ -65,7 +65,7 @@
 
       <form class="row">
         <div class="col-sm-1">
-          <label for="dtStartDate" class="col-form-label">Start Date</label>
+          <label for="dtStartDate" class="col-form-label">Data Inizio</label>
         </div>
         <div class="col-md-3">
           <input type="datetime" class="form-control" id="dtStartDate" value="2021-09-01T00:00:00.000Z">
@@ -77,7 +77,7 @@
 
       <form class="row">
         <div class="col-sm-1">
-          <label for="dtEndDate" class="col-form-label">End Date</label>
+          <label for="dtEndDate" class="col-form-label">Data Fine</label>
         </div>
         <div class="col-md-3">
           <input type="datetime" class="form-control" id="dtEndDate" value="2021-12-01T00:00:00.000Z">
@@ -89,7 +89,7 @@
 
       <form class="row">
         <div class="col-sm-1">
-          <label for="txtSenderId" class="col-form-label">Sender ID</label>
+          <label for="txtSenderId" class="col-form-label">ID PA</label>
         </div>
         <div class="col-md-3">
           <input type="text" class="form-control" id="txtSenderId">
@@ -101,7 +101,7 @@
 
       <form class="row">
         <div class="col-sm-1">
-          <label for="txtStatus" class="col-form-label">Status</label>
+          <label for="txtStatus" class="col-form-label">Stato</label>
         </div>
         <div class="col-md-3">
           <select class="form-select" aria-label="Default select example" name="txtStatus" id="txtStatus">
@@ -121,7 +121,7 @@
 
       <form class="row">
         <div class="col-sm-1">
-          <label for="txtSubject" class="col-form-label">Subject</label>
+          <label for="txtSubject" class="col-form-label">Descrizione</label>
         </div>
         <div class="col-md-3">
           <input type="text" class="form-control" id="txtSubject">
@@ -223,9 +223,9 @@
         console.log(json);
         jQuery('#container').text("");
 
-        jQuery('#container').append("<h3>Notification</h3>");
+        jQuery('#container').append("<h3>Notifiche</h3>");
         
-            var content = "<table class='table'> <thead> <tr> <th scope='col'>IUN</th>  <th scope='col'>STATUS</th>  <th scope='col'>SENTAT</th> <th scope='col'>PANOTIFICATIONID</th> <th scope='col'>SENDERID</th> <th scope='col'>SUBJECT</th> </tr> </thead> <tbody>"
+            var content = "<table class='table'> <thead> <tr> <th scope='col'>IUN</th>  <th scope='col'>STATO</th>  <th scope='col'>DATA</th> <th scope='col'>PROTOCOLLO</th> <th scope='col'>ID PA</th> <th scope='col'>DESCRIZIONE</th> </tr> </thead> <tbody>"
             json.forEach(element => {
               content += "<tr> <td>" + element.iun + "</td>"+
               "<td>" + element.notificationStatus + "</td>"+

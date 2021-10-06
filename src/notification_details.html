@@ -66,10 +66,10 @@
         <input type="password" class="form-control" id="API-Key">
     </div>
     <div class="col-auto">
-        <label for="API-Key" class="form-text">AWS API Key</label>
+        <label for="API-Key" class="form-text">API Key di AWS</label>
     </div>
     <div class="col-sm-1">
-      <button type="button" class="btn btn-outline-dark" name="btnDownload" id="btnDownload">Refresh</button>
+      <button type="button" class="btn btn-outline-dark" name="btnDownload" id="btnDownload">Ricarica</button>
   </div>
 </form>
 </div>
@@ -81,9 +81,9 @@
     <div id='documents'>
         <p><hr></p>
         <div class='row'>
-            <div class='h3 col-sm-2 align-self-start' >Attachments:  </div>
-            <button class='btn btn-outline-dark col-sm-1' id='download'>Show</button>
-            <div class='h3 col-sm-2 align-self-end legal_facts' id='legalfacts'>Legal Facts: </div>
+            <div class='h3 col-sm-2 align-self-start' >Allegati:  </div>
+            <button class='btn btn-outline-dark col-sm-1' id='download'>Mostra</button>
+            <div class='h3 col-sm-2 align-self-end legal_facts' id='legalfacts'>Atti: </div>
         </div>
         <div class='row'>
             <div class='col align-self-start' id='docs'></div>
@@ -254,7 +254,7 @@
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
             var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> "+
-            "<b> Type: </b>" + json[i].type;
+            "<b> Tipo: </b>" + json[i].type;
             if(json[i].type != 'SENDER_ACK') {
                 content += "<b> Tax Id: </b>" + json[i].taxId
             }
@@ -300,22 +300,22 @@
 
             // notification
             jQuery('#notification').append("<p class='h6'>" + "<b>Iun:</b> " + json.iun + "</p>");
-            jQuery('#notification').append("<p class='h6'>" + "<b>Subject:</b> " + json.subject + "</p>");
-            jQuery('#notification').append("<p class='h6'>" +  "<b>Protocol Number:</b> " + json.paNotificationId + "</p>");
-            jQuery('#notification').append("<p class='h6'>" + " <b>Sent at:</b> " + json.sentAt + "</p>");
+            jQuery('#notification').append("<p class='h6'>" + "<b>Descrizione:</b> " + json.subject + "</p>");
+            jQuery('#notification').append("<p class='h6'>" +  "<b>Protocollo:</b> " + json.paNotificationId + "</p>");
+            jQuery('#notification').append("<p class='h6'>" + " <b>Data:</b> " + json.sentAt + "</p>");
             if (json.sender) {
-                jQuery('#notification').append("<p class='h6'>" + " <b>Sender paId:</b> " + json.sender.paId + "</p>");
+                jQuery('#notification').append("<p class='h6'>" + " <b>ID PA:</b> " + json.sender.paId + "</p>");
             }
 
             //recipients
             jQuery('#recipients').empty();
             jQuery('#recipients').append("<p><hr></p>");
-            jQuery('#recipients').append("<h3>Recipients</h3>");
+            jQuery('#recipients').append("<h3>Destinatari</h3>");
             for (var i = 0; i < json.recipients.length; i++) {
                 let recipient = "";
-                recipient += "<b>Denomination:</b> " + json.recipients[i].denomination + " / <b>TaxId:</b> " + json.recipients[i].taxId;
-                recipient += " / <b>Digital Domicile:</b> " + json.recipients[i].digitalDomicile.address + " (" + json.recipients[i].digitalDomicile.type + ")";
-                recipient += " / <b>Physical Address:</b> " + json.recipients[i].physicalAddress.address + ", " + json.recipients[i].physicalAddress.municipality;
+                recipient += "<b>Denominazione:</b> " + json.recipients[i].denomination + " / <b>TaxId:</b> " + json.recipients[i].taxId;
+                recipient += " / <b>Domicilio Digitale:</b> " + json.recipients[i].digitalDomicile.address + " (" + json.recipients[i].digitalDomicile.type + ")";
+                recipient += " / <b>Indirizzo Fisico:</b> " + json.recipients[i].physicalAddress.address + ", " + json.recipients[i].physicalAddress.municipality;
                 recipient += ", " + json.recipients[i].physicalAddress.province + ", " + json.recipients[i].physicalAddress.zip;
                 jQuery('#recipients').append("<p class='h6'>" + recipient + "</p>");
             }
@@ -328,10 +328,10 @@
             // status history
             jQuery('#status').empty();
             jQuery('#status').append("<p><hr></p>");
-            jQuery('#status').append("<p class='h3'>Status: " + json.notificationStatus + "</p>");
+            jQuery('#status').append("<p class='h3'>Stato: " + json.notificationStatus + "</p>");
             for (var i = 0; i < json.notificationStatusHistory.length; i++) {
                 let el = json.notificationStatusHistory[i];
-                jQuery('#status').append("<p class='h6'>Status: <b>" + el.status + "</b> since " + el.activeFrom + "</p>");
+                jQuery('#status').append("<p class='h6'>Stato: <b>" + el.status + "</b> in data " + el.activeFrom + "</p>");
             }
             jQuery('#status').append("</p>");
 
@@ -342,39 +342,39 @@
             jQuery('#timeline').append("<h3>Timeline</h3>");
 
             json.timeline.forEach(el => {
-                var content = "<ul class='list-group list-group-flush'> <li class='list-group-item list-group-item-dark'> <b> Since: </b>" + el.timestamp +  " <b>TaxId: </b>" + el.details.taxId +" <b>Status: </b>" +el.category + "</li> </ul>";
+                var content = "<ul class='list-group list-group-flush'> <li class='list-group-item list-group-item-dark'> <b> Data: </b>" + el.timestamp +  " <b>TaxId: </b>" + el.details.taxId +" <b>Stato: </b>" +el.category + "</li> </ul>";
                 switch(el.category){
                     case "RECEIVED_ACK": el.details.documentsDigests.forEach(digest => content += "<ul class='list-group list-group-flush'> <li class='list-group-item'> <b>Digest: </b>" +digest.sha256 + "</li> " ); content +="</ul>" ;break;
                     case "NOTIFICATION_PATH_CHOOSE": {
                         content += "<ul class='list-group list-group-flush'> " +
-                        "<li class='list-group-item'> <b>Delivery Mode: </b> " + el.details.deliveryMode +" </li>" +
-                        " <li class='list-group-item'> <b>Platform: </b>" + (el.details.platform ? el.details.platform.address: '') + "</li> " +
-                        " <li class='list-group-item'> <b>Special: </b>" + (el.details.special ? el.details.special.address: '') + "</li> " +
-                        " <li class='list-group-item'> <b>General: </b>"+ (el.details.general ? el.details.general.address: '') + "</li>";
+                        "<li class='list-group-item'> <b>Tipo di Consegna: </b> " + el.details.deliveryMode +" </li>" +
+                        " <li class='list-group-item'> <b>Piattaforma: </b>" + (el.details.platform ? el.details.platform.address: '') + "</li> " +
+                        " <li class='list-group-item'> <b>Speciale: </b>" + (el.details.special ? el.details.special.address: '') + "</li> " +
+                        " <li class='list-group-item'> <b>Generale: </b>"+ (el.details.general ? el.details.general.address: '') + "</li>";
                         if( el.details.courtesyAddresses ) {
                             el.details.courtesyAddresses.forEach( courtesy =>
-                                content += "<li class='list-group-item'> <b>Courtesy: </b>" +  courtesy.address + " </li> "
+                                content += "<li class='list-group-item'> <b>Cortesia: </b>" +  courtesy.address + " </li> "
                             );
                         }
                         content +="</ul>";
                     }
                     break;
                     case "SEND_DIGITAL_DOMICILE": content += "<ul class='list-group list-group-flush'> " + 
-                    " <li class='list-group-item'> <b>Address Source: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
-                    " <li class='list-group-item'> <b>Address: </b>" + ( el.details.address ? el.details.address.address : '')+ "</li> "+
+                    " <li class='list-group-item'> <b>Indirizzo Sorgente: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
+                    " <li class='list-group-item'> <b>Indirizzo: </b>" + ( el.details.address ? el.details.address.address : '')+ "</li> "+
                     " </ul>"; break;
                     case "SEND_DIGITAL_DOMICILE_FEEDBACK": content += "<ul class='list-group list-group-flush'> "+
-                    " <li class='list-group-item'> <b>Address Source: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
-                    " <li class='list-group-item'> <b>Address: </b>"+ el.details.address.address + "</li> "+
-                    " <li class='list-group-item'> <b>Result: </b>" + el.details.errors[0] + "</li> </ul>"; break;
+                    " <li class='list-group-item'> <b>Indirizzo Sorgente: </b>" + (el.elementId ? el.elementId.replaceAll(/^.*_([A-Z]*)_n[0-9]$/g, "$1") : "") + "</li> "+
+                    " <li class='list-group-item'> <b>Indirizzo: </b>"+ el.details.address.address + "</li> "+
+                    " <li class='list-group-item'> <b>Risultato: </b>" + el.details.errors[0] + "</li> </ul>"; break;
 
                     case "SEND_DIGITAL_DOMICILE_FAILURE":
                     {
                         content += "<ul class='list-group list-group-flush'> ";
                         for( let r of el.details.addresses) {
                             content += "<li class='list-group-item'>"
-                                     + " <b>When:</b> " + r.when
-                                     + " <b>Address:</b> " + r.address.address
+                                     + " <b>Quando:</b> " + r.when
+                                     + " <b>Indirizzo:</b> " + r.address.address
                                      + "</li>";
                         }
                         content += "</ul> ";
@@ -383,7 +383,7 @@
 
                     case "SEND_PAPER_FEEDBACK": {
                         content += "<ul class='list-group list-group-flush'> "
-                                 + "<li class='list-group-item'> <b>Result: </b>" + el.details.errors[0] + "</li>"
+                                 + "<li class='list-group-item'> <b>Risultato: </b>" + el.details.errors[0] + "</li>"
                                  + "</ul>";
                     }
                     break;
