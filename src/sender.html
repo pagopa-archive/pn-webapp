@@ -171,6 +171,11 @@
             taxId: "CGNNMO80A03H501T",
             denomination: "Nome3 Cognome3",
             pecAddress: "nome3.cognome3@fail-both.domicilio-digitale.it"
+        },
+        "PCTPGP00A04H501X" : {
+            taxId:"PCTPGP00A04H501X",
+            denomination: "PagoPA PecTest",
+            pecAddress: "##"
         }
     }
     let DATA = {
@@ -196,7 +201,17 @@
         let idx = 1;
         for( let key of Object.keys( RECIPIENT_DATA ) ) {
             let info = RECIPIENT_DATA[key];
-            let content = "<form class='row'> <div class='col-auto align-self-center'> <input class='form-check-input' type='checkbox' value='' id='recipient-check" + (idx++) +"' data-tax-id='" +info.taxId + "'></div><div class='col-auto'><label class='col-form-label'> "+ info.taxId + " " + info.denomination + " " + info.pecAddress +"</label> </div></form>"
+            let content = "<form class='row'>"
+                        + "<div class='col-auto align-self-center'>"
+                        + "<input class='form-check-input' type='checkbox' value='' id='recipient-check" + (idx++) +"' data-tax-id='" +info.taxId + "'>"
+                        + "</div><div class='col-auto'>";
+            if( "##" == info.pecAddress ) {
+                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + " <input class='' id='pecAddrReal' value=''></label>";
+            }
+            else {
+                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + " " + info.pecAddress +"</label>";
+            }
+            content += "</div></form>";
             jQuery('#recipients')
             .append(content);
         }
@@ -259,25 +274,30 @@ async function sendNotification() {
             });
         }
     }
-    for( let i = 1; i <= 3; i++ ) {
+    for( let i = 1; i <= 4; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
             let recipientInfo = RECIPIENT_DATA[taxId];
+            let realPecAddr = recipientInfo.pecAddress;
+            if( "##" == realPecAddr ) {
+                realPecAddr = jQuery('#pecAddrReal').val();
+            }
             requestBody.recipients.push({
                 taxId: taxId,
                 denomination: recipientInfo.denomination,
                 digitalDomicile: {
                     type: "PEC",
-                    address: recipientInfo.pecAddress
+                    address: realPecAddr
                 },
                 physicalAddress: {
-                    at: "string",
-                    address: "string",
-                    addressDetails: "string",
-                    zip: "string",
-                    municipality: "string",
-                    province: "string"
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale",
+                    addressDetails: "scala A",
+                    zip: "CAP di " + i,
+                    municipality: "Comune",
+                    province: "PROV",
+                    state: "IT"
                 }
             })
         }
@@ -399,17 +419,21 @@ async function confirmNotification() {
             });
         }
     }
-    for( let i = 1; i <= 3; i++ ) {
+    for( let i = 1; i <= 4; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
             let recipientInfo = RECIPIENT_DATA[taxId];
+            let realPecAddr = recipientInfo.pecAddress;
+            if( "##" == realPecAddr ) {
+                realPecAddr = jQuery('#pecAddrReal').val();
+            }
             requestBody.recipients.push({
                 taxId: taxId,
                 denomination: recipientInfo.denomination,
                 digitalDomicile: {
                     type: "PEC",
-                    address: recipientInfo.pecAddress
+                    address: realPecAddr
                 },
                 physicalAddress: {
                     at: "Presso qualcuno",
@@ -417,7 +441,8 @@ async function confirmNotification() {
                     addressDetails: "scala A",
                     zip: "CAP di " + i,
                     municipality: "Comune",
-                    province: "PROV"
+                    province: "PROV",
+                    state: "IT"
                 }
             })
         }
