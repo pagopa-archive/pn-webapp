@@ -204,6 +204,8 @@
       }
 
       let json = await response.json();
+      console.log(json);
+      orderNotification(json);
       printNotification(json);
     }
 
@@ -216,6 +218,15 @@
       if(status) url.searchParams.append('status', status);
       if(subjectRegExp) url.searchParams.append('subjectRegExp', subjectRegExp);
       return url;
+    }
+
+    function orderNotification(json) {
+      for (let i = 0; i < json.length ; i++) {
+        json[i].idx = i;
+      }
+        json.sort(function (a,b) {
+            return b.idx - a.idx;
+        });
     }
     
 

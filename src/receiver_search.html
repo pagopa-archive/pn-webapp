@@ -195,7 +195,17 @@
         }
 
         let json = await response.json();
+        orderNotification(json);
         printNotification(json);
+      }
+
+      function orderNotification(json) {
+        for (let i = 0; i < json.length ; i++) {
+            json[i].idx = i;
+          }
+          json.sort(function (a,b) {
+              return b.idx - a.idx;
+          });
       }
 
       function addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp) {
