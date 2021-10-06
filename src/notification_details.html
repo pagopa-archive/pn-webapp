@@ -45,7 +45,7 @@
             margin-left: 333px;
         }
     </style>
-    
+
     <!--
     <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
         scarica
@@ -82,7 +82,7 @@
         <p><hr></p>
         <div class='row'>
             <div class='h3 col-sm-2 align-self-start' >Attachments:  </div>
-            <button class='btn btn-outline-dark col-sm-1' id=download>Show</button>
+            <button class='btn btn-outline-dark col-sm-1' id='download'>Show</button>
             <div class='h3 col-sm-2 align-self-end legal_facts' id='legalfacts'>Legal Facts: </div>
         </div>
         <div class='row'>
@@ -249,7 +249,7 @@
     }
 
     function printLegalFacts(searcherId, userEndPoint, userHeader, json) {
-        
+
         let iun = (new URL(location.href)).searchParams.get('iun');
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
