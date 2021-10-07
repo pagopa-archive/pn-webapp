@@ -17,7 +17,7 @@ if ( [ -f 'package.json' ] ) then
       --recipient.denomination="Nome1 Cognome1"  \
       --recipient.digitalDomicile.type="PEC" \
       --recipient.digitalDomicile.address="nome1.cognome1@fail-both.domicilio-digitale.it" \
-      --recipient.physicalAddress.address="In via che non esiste numero 1" \
+      --recipient.physicalAddress.address="ImmediateResponse: In via che non esiste numero 1" \
       --recipient.physicalAddress.at="Presso qualcuno" \
       --recipient.physicalAddress.addressDetails="Scala A" \
       --recipient.physicalAddress.zip="11111" \
@@ -28,7 +28,7 @@ if ( [ -f 'package.json' ] ) then
       --recipient.denomination="Nome2 Cognome2"  \
       --recipient.digitalDomicile.type="PEC" \
       --recipient.digitalDomicile.address="nome2.cognome2@fail-first.domicilio-digitale.it" \
-      --recipient.physicalAddress.address="In via che non esiste numero 2" \
+      --recipient.physicalAddress.address="ImmediateResponse: In via che non esiste numero 2" \
       --recipient.physicalAddress.at="Presso qualcuno" \
       --recipient.physicalAddress.addressDetails="Scala B" \
       --recipient.physicalAddress.zip="22222" \
