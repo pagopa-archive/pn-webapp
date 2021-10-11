@@ -1,14 +1,12 @@
-hostname=localhost
-port=8080
-url_prefix="/"
-
+url_prefix="http://localhost:8080/"
+api_key="api-key"
 
 if ( [ -f 'package.json' ] ) then
   npm install
   node src/cli.js --hostname=$hostname --port=$port --url_prefix=$url_prefix \
-      --baseUrl="http://localhost:8080" \
-      --paId="paId" \
-      --api-key="api-key" \
+      --baseUrl="${url_prefix}" \
+      --paId="fromCli" \
+      --api-key="${api_key}" \
       \
       --paNotificationId="protocollo123" \
       --subject="Una multa o simile" \
