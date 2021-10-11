@@ -1,9 +1,9 @@
-url_prefix="http://localhost:8080/"
+url_prefix="http://localhost:8080"
 api_key="api-key"
 
 if ( [ -f 'package.json' ] ) then
   npm install
-  node src/cli.js --hostname=$hostname --port=$port --url_prefix=$url_prefix \
+  node src/cli_send.js --hostname=$hostname --port=$port --url_prefix=$url_prefix \
       --baseUrl="${url_prefix}" \
       --paId="fromCli" \
       --api-key="${api_key}" \
