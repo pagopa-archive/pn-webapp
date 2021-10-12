@@ -265,15 +265,16 @@
                         + "<input class='form-check-input' type='checkbox' value='' id='recipient-check" + (idx++) +"' data-tax-id='" +info.taxId + "'>"
                         + "</div> <div class='col-auto'>";
             if( "##" == info.pecAddress ) {
-                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + " <input class='' id='pecAddrReal' value=''></label>";
-                content += "</div> <div class='col-xl-6'>"
-                content += "<div class='row'> <div class='col-md-2'> Presso: </div> <input class='col-auto' id='atReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Via: </div> <input class='col-auto' id='addressReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Scala: </div><input class='col-auto' id='addressDetailsReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Zip: </div><input class='col-auto' id='zipReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Comune: </div><input class='col-auto' id='municipalityReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Provincia: </div><input class='col-auto' id='provinceReal' value=''></div>";
-                content += "<div class='row'> <div class='col-md-2'> Stato: </div><input class='col-auto' id='stateReal' value=''></div>";
+                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + "</label>";
+                content += "<div class='row'> <div class='col-md-3'> PEC: </div> <input class='col-auto' id='pecAddrReal' value=''></div>";
+                //content += "</div> <div class='col-xl-6'>"
+                content += "<div class='row'> <div class='col-md-3'> Presso: </div> <input class='col-auto' id='atReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Via: </div> <input class='col-auto' id='addressReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Scala: </div><input class='col-auto' id='addressDetailsReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Zip: </div><input class='col-auto' id='zipReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Comune: </div><input class='col-auto' id='municipalityReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Provincia: </div><input class='col-auto' id='provinceReal' value=''></div>";
+                content += "<div class='row'> <div class='col-md-3'> Stato: </div><input class='col-auto' id='stateReal' value=''></div>";
                 
             }
             else {
