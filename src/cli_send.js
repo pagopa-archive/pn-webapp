@@ -90,6 +90,7 @@ async function sendNotification( params ) {
     let requestBody = {
         paNotificationId: params.paNotificationId,
         subject: params.subject,
+		physicalCommunicationType: params.physicalCommunicationType,
         cancelledIun: null,
         recipients: params.recipients,
         documents: []
@@ -134,6 +135,7 @@ function normalizeParameters( argv ) {
     let paId = argv.paId;
     let paNotificationId = argv.paNotificationId;
     let subject = argv.subject;
+	let physicalCommunicationType = argv.physicalCommunicationType
 
     let recipientArg = argv.recipient;
     let recipients = [];
@@ -195,7 +197,7 @@ function normalizeParameters( argv ) {
             });
     }
 
-    return { baseUrl, apiKey, paId, paNotificationId, subject, recipients, documents }
+    return { baseUrl, apiKey, paId, paNotificationId, subject, physicalCommunicationType, recipients, documents }
 }
 
 
