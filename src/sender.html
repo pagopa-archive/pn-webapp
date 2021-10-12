@@ -44,7 +44,7 @@
     <h1>Mittente: Nuova Notifica</h1>
 
     <form class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
           <label for="API-Key" class="col-form-label">API-KEY</label>
         </div>
         <div class="col-md-3">
@@ -56,7 +56,7 @@
     </form>
 
     <form class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
           <label for="paId" class="col-form-label">ID PA</label>
         </div>
         <div class="col-md-3">
@@ -68,7 +68,7 @@
     </form>
 
     <form class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
           <label for="paNotificationId" class="col-form-label">Protocollo</label>
         </div>
         <div class="col-md-3">
@@ -80,7 +80,7 @@
     </form>
 
     <form class="row">
-        <div class="col-sm-1">
+        <div class="col-sm-2">
           <label for="subject" class="col-form-label">Descrizione</label>
       </div>
       <div class="col-md-3">
@@ -88,6 +88,21 @@
       </div>
       <div class="col-auto">
           <label for="subject" class="form-text">Descrizione notifica</label>
+      </div>
+    </form>
+
+    <form class="row">
+        <div class="col-sm-2">
+          <label for="physicalComType" class="col-form-label">Tipo di Comunicazione</label>
+      </div>
+      <div class="col-md-3">
+          <select class="form-select" aria-label="Default select example" name="physicalComType" id="physicalComType">
+          <option selected>890</option>
+          <option>Racc. A/R</option>
+        </select>
+      </div>
+      <div class="col-auto">
+          <label for="physicalComType" class="form-text">Tipo di comunicazione analogica</label>
       </div>
     </form>
 
@@ -165,6 +180,7 @@
             taxId: "CGNNMO80A01H501M",
             denomination: "Nome1 Cognome1",
             pecAddress: "nome1.cognome1@fail-both.domicilio-digitale.it",
+            physicalComunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -179,6 +195,7 @@
             taxId: "CGNNMO80A02H501R",
             denomination: "Nome2 Cognome2",
             pecAddress: "nome2.cognome2@fail-first.domicilio-digitale.it",
+            physicalComunicationType: "Racc. A/R",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -193,6 +210,7 @@
             taxId: "CGNNMO80A03H501T",
             denomination: "Nome3 Cognome3",
             pecAddress: "nome3.cognome3@fail-both.domicilio-digitale.it",
+            physicalComunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -207,6 +225,7 @@
             taxId:"PCTPGP00A04H501X",
             denomination: "PagoPA PecTest",
             pecAddress: "##",
+            physicalComunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -246,7 +265,6 @@
                         + "<input class='form-check-input' type='checkbox' value='' id='recipient-check" + (idx++) +"' data-tax-id='" +info.taxId + "'>"
                         + "</div> <div class='col-auto'>";
             if( "##" == info.pecAddress ) {
-                //content += "<div class='col-auto'>";
                 content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + " <input class='' id='pecAddrReal' value=''></label>";
                 content += "</div> <div class='col-xl-6'>"
                 content += "<div class='row'> <div class='col-md-2'> Presso: </div> <input class='col-auto' id='atReal' value=''></div>";
@@ -259,9 +277,8 @@
                 
             }
             else {
-                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + " " + info.pecAddress +"</label> </form>";
+                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + "<b> PEC: </b> " + info.pecAddress +"</label> </form>";
             }
-            //content += "</div></form>";
             jQuery('#recipients')
             .append(content);
         }
@@ -303,10 +320,12 @@ async function sendNotification() {
     let paId = jQuery('#paId').val()
     let paNotificationId = jQuery('#paNotificationId').val()
     let subject = jQuery('#subject').val()
+    let physicalComType = jQuery('#physicalComType').val()
 
     let requestBody = {
         paNotificationId: paNotificationId,
         subject: subject,
+        physicalComunicationType: physicalComType,
         cancelledIun: null,
         recipients: [],
         documents: []
@@ -335,8 +354,8 @@ async function sendNotification() {
             let addressDetails = recipientInfo.physicalAddress.addressDetails;
             let zip = recipientInfo.physicalAddress.zip;
             let municipality = recipientInfo.physicalAddress.municipality;
-            let province = ecipientInfo.physicalAddress.province;
-            let state = ecipientInfo.physicalAddress.state;
+            let province = recipientInfo.physicalAddress.province;
+            let state = recipientInfo.physicalAddress.state;
             if( "##" == realPecAddr ) {
                 realPecAddr = jQuery('#pecAddrReal').val();
                 at = jQuery('#atReal').val();
@@ -459,10 +478,12 @@ async function confirmNotification() {
     let paId = jQuery('#paId').val()
     let paNotificationId = jQuery('#paNotificationId').val()
     let subject = jQuery('#subject').val()
+    let physicalComType = jQuery('#physicalComType').val()
 
     let requestBody = {
             paNotificationId: paNotificationId,
             subject: subject,
+            physicalComunicationType: physicalComType,
             cancelledIun: null,
             recipients: [],
             documents: []
@@ -489,8 +510,22 @@ async function confirmNotification() {
             let taxId = jqEl.data().taxId;
             let recipientInfo = RECIPIENT_DATA[taxId];
             let realPecAddr = recipientInfo.pecAddress;
+            let at = recipientInfo.physicalAddress.at;
+            let address = recipientInfo.physicalAddress.address;
+            let addressDetails = recipientInfo.physicalAddress.addressDetails;
+            let zip = recipientInfo.physicalAddress.zip;
+            let municipality = recipientInfo.physicalAddress.municipality;
+            let province = recipientInfo.physicalAddress.province;
+            let state = recipientInfo.physicalAddress.state;
             if( "##" == realPecAddr ) {
                 realPecAddr = jQuery('#pecAddrReal').val();
+                at = jQuery('#atReal').val();
+                address = jQuery('#addressReal').val();
+                addressDetails = jQuery('#addressDetailsReal').val();
+                zip = jQuery('#zipReal').val();
+                municipality = jQuery('#municipalityReal').val();
+                province = jQuery('#provinceReal').val();
+                state = jQuery('#stateReal').val();
             }
             requestBody.recipients.push({
                 taxId: taxId,
@@ -500,13 +535,13 @@ async function confirmNotification() {
                     address: realPecAddr
                 },
                 physicalAddress: {
-                    at: recipientInfo.physicalAddress.at,
-                    address: recipientInfo.physicalAddress.address,
-                    addressDetails: recipientInfo.physicalAddress.addressDetails,
-                    zip: recipientInfo.physicalAddress.zip,
-                    municipality: recipientInfo.physicalAddress.municipality,
-                    province: ecipientInfo.physicalAddress.province,
-                    state: ecipientInfo.physicalAddress.state
+                    at: at,
+                    address: address,
+                    addressDetails: addressDetails,
+                    zip: zip,
+                    municipality: municipality,
+                    province: province,
+                    state: state
                 }
             })
         }
