@@ -180,7 +180,7 @@
             taxId: "CGNNMO80A01H501M",
             denomination: "Nome1 Cognome1",
             pecAddress: "nome1.cognome1@fail-both.domicilio-digitale.it",
-            physicalComunicationType: "890",
+            physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -195,7 +195,7 @@
             taxId: "CGNNMO80A02H501R",
             denomination: "Nome2 Cognome2",
             pecAddress: "nome2.cognome2@fail-first.domicilio-digitale.it",
-            physicalComunicationType: "Racc. A/R",
+            physicalCommunicationType: "Racc. A/R",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -210,7 +210,7 @@
             taxId: "CGNNMO80A03H501T",
             denomination: "Nome3 Cognome3",
             pecAddress: "nome3.cognome3@fail-both.domicilio-digitale.it",
-            physicalComunicationType: "890",
+            physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -225,7 +225,7 @@
             taxId:"PCTPGP00A04H501X",
             denomination: "PagoPA PecTest",
             pecAddress: "##",
-            physicalComunicationType: "890",
+            physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
                     address: "In via del tutto eccezionale: ImmediateResponse",
@@ -326,7 +326,7 @@ async function sendNotification() {
     let requestBody = {
         paNotificationId: paNotificationId,
         subject: subject,
-        physicalComunicationType: physicalComType,
+        physicalCommunicationType: physicalComType,
         cancelledIun: null,
         recipients: [],
         documents: []
@@ -484,7 +484,7 @@ async function confirmNotification() {
     let requestBody = {
             paNotificationId: paNotificationId,
             subject: subject,
-            physicalComunicationType: physicalComType,
+            physicalCommunicationType: physicalComType,
             cancelledIun: null,
             recipients: [],
             documents: []
