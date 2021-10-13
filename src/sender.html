@@ -221,6 +221,20 @@
                     state: "IT"
                 }
         },
+        "CGNNMO80A03H501U" : {
+            taxId:"CGNNMO80A03H501U",
+            denomination: "Nome4 Cognome4",
+            physicalCommunicationType: "890",
+            physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    addressDetails: "scala A",
+                    zip: "00100",
+                    municipality: "Comune",
+                    province: "PROV",
+                    state: "IT"
+                }
+        },
         "PCTPGP00A04H501X" : {
             taxId:"PCTPGP00A04H501X",
             denomination: "PagoPA PecTest",
@@ -278,7 +292,13 @@
                 
             }
             else {
-                content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + "<b> PEC: </b> " + info.pecAddress +"</label> </form>";
+                if(info.pecAddress) {
+                    content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + "<b> PEC: </b> " + info.pecAddress +"</label> </form>";
+                }
+                else {
+                    content += "<label class='col-form-label'> "+ info.taxId + " " + info.denomination + "<b> Posta: </b> " + info.physicalAddress.address + "</label> </form>";
+                }
+                
             }
             jQuery('#recipients')
             .append(content);
