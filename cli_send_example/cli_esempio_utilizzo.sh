@@ -10,6 +10,7 @@ if ( [ -f 'package.json' ] ) then
       \
       --paNotificationId="protocollo123" \
       --subject="Una multa o simile" \
+	  --physicalCommunicationType="REGISTERED_LETTER_890" \
       \
       --recipient.taxId="CGNNMO80A01H501M"  \
       --recipient.denomination="Nome1 Cognome1"  \
