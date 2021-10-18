@@ -97,8 +97,8 @@
       </div>
       <div class="col-md-3">
           <select class="form-select" aria-label="Default select example" name="physicalComType" id="physicalComType">
-          <option selected>890</option>
-          <option>Racc. A/R</option>
+          <option selected value="REGISTERED_LETTER_890">890</option>
+          <option value="SIMPLE_REGISTERED_LETTER">Racc. A/R</option>
         </select>
       </div>
       <div class="col-auto">
@@ -183,7 +183,7 @@
             physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
-                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    address: "In via del tutto eccezionale: ImmediateResponse_OK",
                     addressDetails: "scala A",
                     zip: "00100",
                     municipality: "Comune",
@@ -198,7 +198,7 @@
             physicalCommunicationType: "Racc. A/R",
             physicalAddress: {
                     at: "Presso qualcuno",
-                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    address: "In via del tutto eccezionale: ImmediateResponse_OK",
                     addressDetails: "scala A",
                     zip: "00100",
                     municipality: "Comune",
@@ -213,7 +213,7 @@
             physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
-                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    address: "In via del tutto eccezionale: ImmediateResponse_OK",
                     addressDetails: "scala A",
                     zip: "00100",
                     municipality: "Comune",
@@ -223,11 +223,39 @@
         },
         "CGNNMO80A03H501U" : {
             taxId:"CGNNMO80A03H501U",
-            denomination: "Nome4 Cognome4",
+            denomination: "Analogico Ok",
             physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
-                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    address: "In via del tutto eccezionale: ImmediateResponse_OK",
+                    addressDetails: "scala A",
+                    zip: "00100",
+                    municipality: "Comune",
+                    province: "PROV",
+                    state: "IT"
+                }
+        },
+        "CGNNMO80A03H501V" : {
+            taxId:"CGNNMO80A03H501V",
+            denomination: "Analogico Retry",
+            physicalCommunicationType: "890",
+            physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale: ImmediateResponse(NEW_ADDR: via senza nome ImmediateResponse_OK)",
+                    addressDetails: "scala A",
+                    zip: "00100",
+                    municipality: "Comune",
+                    province: "PROV",
+                    state: "IT"
+                }
+        },
+        "CGNNMO80A03H501Z" : {
+            taxId:"CGNNMO80A03H501Z",
+            denomination: "Analogico Fail",
+            physicalCommunicationType: "890",
+            physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "In via del tutto eccezionale: ImmediateResponse_FAIL",
                     addressDetails: "scala A",
                     zip: "00100",
                     municipality: "Comune",
@@ -242,7 +270,7 @@
             physicalCommunicationType: "890",
             physicalAddress: {
                     at: "Presso qualcuno",
-                    address: "In via del tutto eccezionale: ImmediateResponse",
+                    address: "In via del tutto eccezionale: ImmediateResponse_OK",
                     addressDetails: "scala A",
                     zip: "00100",
                     municipality: "Comune",
@@ -364,7 +392,7 @@ async function sendNotification() {
             });
         }
     }
-    for( let i = 1; i <= 4; i++ ) {
+    for( let i = 1; i <= 7; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
@@ -390,10 +418,10 @@ async function sendNotification() {
             requestBody.recipients.push({
                 taxId: taxId,
                 denomination: recipientInfo.denomination,
-                digitalDomicile: {
+                digitalDomicile: (!realPecAddr ? null : {
                     type: "PEC",
                     address: realPecAddr
-                },
+                }),
                 physicalAddress: {
                     at: at,
                     address: address,
@@ -525,7 +553,7 @@ async function confirmNotification() {
             });
         }
     }
-    for( let i = 1; i <= 4; i++ ) {
+    for( let i = 1; i <= 7; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
@@ -551,10 +579,10 @@ async function confirmNotification() {
             requestBody.recipients.push({
                 taxId: taxId,
                 denomination: recipientInfo.denomination,
-                digitalDomicile: {
+                digitalDomicile:(!realPecAddr ? null :  {
                     type: "PEC",
                     address: realPecAddr
-                },
+                }),
                 physicalAddress: {
                     at: at,
                     address: address,
