@@ -302,6 +302,7 @@
             jQuery('#notification').append("<p class='h6'>" + "<b>Iun:</b> " + json.iun + "</p>");
             jQuery('#notification').append("<p class='h6'>" + "<b>Descrizione:</b> " + json.subject + "</p>");
             jQuery('#notification').append("<p class='h6'>" +  "<b>Protocollo:</b> " + json.paNotificationId + "</p>");
+            jQuery('#notification').append("<p class='h6'>" +  "<b>Physical communication type:</b> " + json.physicalCommunicationType + "</p>");
             jQuery('#notification').append("<p class='h6'>" + " <b>Data:</b> " + json.sentAt + "</p>");
             if (json.sender) {
                 jQuery('#notification').append("<p class='h6'>" + " <b>ID PA:</b> " + json.sender.paId + "</p>");
@@ -391,6 +392,9 @@
                         if (el.details.address) {
                             content += "<li class='list-group-item'> <b>Spedizione: </b>" + JSON.stringify(el.details.address) + "</li>"
                         }
+                        content += "<ul class='list-group list-group-flush'> "
+                                 + "<li class='list-group-item'> <b>Service Level: </b>" + el.details.serviceLevel + "</li>";
+
                         content += "</ul> ";
                     }
                     break;
@@ -404,6 +408,9 @@
                         if (el.details.newAddress) {
                             content += "<li class='list-group-item'> <b>Nuovo: </b>" + JSON.stringify(el.details.newAddress) + "</li>"
                         }
+                        content += "<ul class='list-group list-group-flush'> "
+                                 + "<li class='list-group-item'> <b>Service Level: </b>" + el.details.serviceLevel + "</li>";
+
                         content += "</ul>";
                     }
                     break;
