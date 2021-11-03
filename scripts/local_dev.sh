@@ -18,6 +18,7 @@ envsub src/notification_details.html dist/notification_details.html
 envsub src/sender.html dist/sender.html
 envsub src/sender_search.html dist/sender_search.html
 envsub src/receiver_search.html dist/receiver_search.html
+envsub src/direct_access.html dist/direct_access.html
 cp -r src/js dist/
 
 echo "Start CORS proxy"
