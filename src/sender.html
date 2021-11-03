@@ -249,6 +249,20 @@
                     state: "IT"
                 }
         },
+        "CGNNMO80A03H501F" : {
+            taxId:"CGNNMO80A03H501F",
+            denomination: "Analogico Fail",
+            physicalCommunicationType: "890",
+            physicalAddress: {
+                    at: "Presso qualcuno",
+                    address: "ImmediateResponse(NEW_ADDR:ImmediateResponse(FAIL) Irreperibile totale)",
+                    addressDetails: "scala A",
+                    zip: "00100",
+                    municipality: "Comune",
+                    province: "PROV",
+                    state: "IT"
+                }
+        },
         "CGNNMO80A03H501Z" : {
             taxId:"CGNNMO80A03H501Z",
             denomination: "Analogico Fail",
@@ -392,7 +406,8 @@ async function sendNotification() {
             });
         }
     }
-    for( let i = 1; i <= 7; i++ ) {
+    
+    for( let i = 1; i <= 8; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
@@ -553,7 +568,7 @@ async function confirmNotification() {
             });
         }
     }
-    for( let i = 1; i <= 7; i++ ) {
+    for( let i = 1; i <= 8; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
