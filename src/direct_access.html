@@ -1,1 +1,139 @@
-pagina di accesso diretto
+	<!doctype html>
+		<html lang="en">
+		<head>
+			<meta name="API-GW" content="${API_GW_BASE_URL}">
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<script src="js/jquery-3.6.0.slim.min.js"></script>
+			<script src="js/bootstrap.bundle.min.js"></script>
+
+
+			<!-- Bootstrap CSS -->
+			<link href="js/bootstrap.min.css" rel="stylesheet">
+
+			<title>Accesso Diretto</title>
+		</head>
+		<body>
+			<style>
+				.row {
+					margin: 10pt;
+				}
+
+				body {
+					margin: 0;
+					padding: 0;
+					height: 100vh;
+				}
+				#login .container #login-row #login-column #login-box {
+					margin-top: 120px;
+					max-width: 600px;
+					height: 320px;
+					border: 1px solid #9C9C9C;
+					background-color: #EAEAEA;
+				}
+				#login .container #login-row #login-column #login-box #login-form {
+					padding: 20px;
+				}
+				#login .container #login-row #login-column #login-box #login-form #register-link {
+					margin-top: -5px;
+				}
+			</style>
+
+			<div id="login">
+				
+				<div class="container">
+					<h1 class="text-center text-black pt-5">Accesso Diretto</h1>
+					<div id="login-row" class="row justify-content-center align-items-center">
+						<div id="login-column" class="col-md-6">
+							<div id="login-box" class="col-md-12">
+								<form id="login-form" class="form" action="" method="post">
+									<h3 class="text-center text-black">Login</h3>
+									<div class="form-group">
+										<label for="API-Key" class="text-black">API-KEY:</label><br>
+										<input type="password" name="API-Key" id="API-Key" class="form-control">
+									</div>
+									<div class="form-group">
+										<label for="txtUserSecret" class="text-black">PIN:</label><br>
+										<input type="password" name="txtUserSecret" id="txtUserSecret" class="form-control">
+									</div>
+									<br/><br/>
+									<div class="form-group">
+										<button type="button" class="btn btn-outline-dark" name="submit" id="submit">Login</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<br/><br/>
+			<div id="container" class=container>
+			</div>
+
+			<script type="text/javascript">
+				jQuery(document).ready(function(){
+					let apiKey = localStorage.getItem("apiKey");
+					if(apiKey)
+					{
+						jQuery('#API-Key').val(apiKey);
+					}
+					jQuery('#API-Key').change( (evt) => {
+						let apiKey = jQuery('#API-Key').val();
+						localStorage.setItem("apiKey", apiKey);
+					});
+
+					jQuery('#submit').click(function(){
+						let token = (new URL(location.href)).searchParams.get('token');
+
+						let endPoint = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/direct_access';
+						let userSecret = jQuery('#txtUserSecret').val();
+
+						if(!userSecret || !apiKey ) {
+							alert('Per favore specifica i campi API-Key e PIN');
+							return;
+						}
+
+
+						fetchIUN(endPoint,userSecret,token);
+
+					});
+				});
+
+
+				async function fetchIUN(endPoint,userSecret,token) {
+					let apiKey = jQuery('#API-Key').val();
+					let request = {
+						method: 'GET',
+						cache: 'no-cache',
+						headers: {
+							'user_secret': userSecret,
+							'Content-Type': 'application/json',
+							'x-api-key': apiKey
+						}
+					}
+
+					var url = new URL(endPoint);
+					url.searchParams.append('token',token);
+
+					let response = await fetch(url, request);
+
+					if (!response.ok) {
+						alert('Attenzione PIN non valido');
+						return;
+					}
+
+					let json = await response.json();
+					let iun = json.iun;
+					let taxid = json.taxId;
+	      			window.location = "notification_details.html?iun=" + iun + "&searcherId=" + taxid + "&role=receiver"
+				}
+				
+			</script>
+
+
+
+
+
+
+
