@@ -8,15 +8,23 @@
     </head>
     <body>
 
-        <style>
+    <style>
         .col-auto{
             margin: 10pt;
         }
+        .bar{
+            margin-top: 2%;
+        }
     </style>
 
-    <div class="container">
+    <div class="container bar">
+
         <div class="nav justify-content-center">
-            <div class="col-auto">
+            <h1 class="title">Piattaforma Notifiche</h1>
+        </div>
+
+        <div class="nav justify-content-center" style="margin-top: 2%">
+          <div class="col-auto">
               <a role="button" class="btn btn-outline-dark" name="btnNewNot" id="btnSearch" href="sender.html">Mittente: Nuova Notifica</a>
           </div>
           <div class="col-auto">
@@ -24,6 +32,9 @@
           </div>
           <div class="col-auto">
               <a role="button" class="btn btn-outline-dark" name="btnDestSearch" id="btnDestSearch" href="receiver_search.html">Destinatario: Ricerca Notifiche</a>
+          </div>
+          <div class="col-auto">
+            <a role="button" class="btn btn-outline-dark" name="btnDestSearch" id="btnDestSearch" href="failed_paper_notification.html">Destinatario: Ricerca Notifiche cartacee fallite</a>
           </div>
       </div>
   </div>

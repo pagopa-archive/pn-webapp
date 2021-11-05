@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="API-GW" content="${API_GW_BASE_URL}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="js/jquery-3.6.0.slim.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="js/bootstrap.min.css" rel="stylesheet">
+
+    <title>Destinatario: Ricerca Notifiche</title>    
+
+</head>
+
+<body>
+    <style>
+        .row {
+            margin: 10pt;
+        }
+        .title{
+            margin-bottom: 5%;
+            margin-top: 1%; 
+        }
+        .searchform{
+            margin-bottom: 2%;
+        }
+        .titlelist{   
+            margin-bottom: 2%;
+        }
+        .resultlist{
+            margin-top: 3%;
+        }
+        .homeicon{
+            margin-left: 1%;
+            margin-top: 1%;
+        }
+    </style>
+
+    <div class="homeicon">
+        <a href="index.html">
+            <img src="media/home.png" width=60" height="55">
+        </a>    
+    </div>
+    
+    <div id="search" class="container">
+    
+        <h1 class="title">Destinatario: Ricerca Notifiche cartacee fallite</h1>
+
+        <div class="searchform">
+            <form class="row">
+                <div class="col-sm-2">
+                    <label for="API-Key" class="col-form-label">API-KEY</label>
+                </div>
+                <div class="col-md-3">
+                    <input type="password" class="form-control" id="API-Key">
+                </div>
+            </form>
+            <form class="row">
+                <div class="col-sm-2">
+                    <label for="recipientId" class="col-form-label">Recipient id</label>
+                </div>
+                <div class="col-md-3">
+                    <input required type="text" class="form-control" id="recipientId">
+                </div>
+            </form>
+    
+            <form class="row">
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-dark" name="btnSearch" id="btnSearch">Ricerca</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div id="resultList" class="container resultlist"></div>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            let apiKey = localStorage.getItem("apiKey");
+            if(apiKey)
+            {
+                jQuery('#API-Key').val(apiKey);
+            }
+            jQuery('#API-Key').change( (evt) => {
+                let apiKey = jQuery('#API-Key').val();
+                localStorage.setItem("apiKey", apiKey);
+            });
+        });
+
+        jQuery(document).ready(function () {
+    
+            jQuery('#btnSearch').click(function () {
+                let endPoint = jQuery('meta[name="API-GW"]').attr('content') + 'delivery/notifications/paper-failed?';
+                let recipientId = jQuery('#recipientId').val();
+
+                if (!recipientId) {
+                    alert('Please specify Recipient ID, Start Date and End Date field');
+                    return;
+                }
+
+                let url = addQueryParams(endPoint, recipientId);
+                fetchNotification(url, recipientId);
+            });
+        });
+
+        async function fetchNotification(url, userId) {
+            let apiKey = jQuery('#API-Key').val();
+            let request = {
+                method: 'GET',
+                cache: 'no-cache',
+                headers: {
+                    'X-PagoPA-User-Id': userId,
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey
+                }
+            }
+
+            let response = await fetch(url, request);
+
+            if (!response.ok) {
+                alert('An error has occured: ${response.status}');
+                return;
+            }
+            console.log('la response e',response);
+
+            let json = await response.json();
+            console.log('json e',json);
+
+            printNotification(json);
+        }
+
+        function addQueryParams(endPoint, recipientId) {
+            let url = new URL(endPoint);
+            url.searchParams.append('recipientId', recipientId);
+            return url;
+        }
+
+        function printNotification(json) {
+            jQuery('#resultList').text("");
+            jQuery('#resultList').append("<h3 class=titlelist>Notifiche cartacee Fallite</h3>");
+
+            var content = "<table class='table'> <thead> <tr> <th scope='col'>RECIPIENT ID</th>  <th scope='col'>IUN</th>  <th scope='col'> Dettagli</th>  </tr> "
+                        +"</thead> <tbody>"
+            json.forEach(element => {
+                content += 
+                    "<tr>"
+                        + "<td>" + element.recipientId + "</td>" 
+                        + "<td>" + element.iun + "</td>" 
+                        + "<td> <a type='button' class='btn btn-outline-dark' href='notification_details.html?iun=" 
+                            + element.iun +"&searcherId=" + element.recipientId +"&role=receiver'>Dettagli</a> </td> </tr>";
+                    +" </tr>"
+            });
+            content += "</tbody> </table>"
+            jQuery('#resultList').append(content);
+        } 
+
+    </script>
+</body>
+
+</html>
