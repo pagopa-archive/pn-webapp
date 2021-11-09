@@ -497,18 +497,31 @@ jQuery(() => {
 })
 </script>
 <script>
+
 async function preloadFiles() {
     let apiKey = jQuery('#API-Key').val()
     let paId = jQuery('#paId').val()
 
-    for( let i = 1; i <= 4; i++ ) {
-        if( jQuery('#file-check'+i).is(':checked') ) {
-            let f = DATA.files[i-1];
-            console.log("Preload " + i + ": ", f)
-            let key = 'doc_' + i
+    let reserveUrl = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/attachments/preload';
 
-            let reserveUrl = jQuery('meta[name="API-GW"]').attr('content') + '/delivery/attachments/preload';
-            let preloadInfoResponse = await fetch( reserveUrl, {
+    let preloadRequestList = [];
+
+
+    for (let i = 1; i <= 4; i++ ) {
+        if( jQuery('#file-check'+i).is(':checked')) {
+            let file = DATA.files[i-1];
+
+            let preloadRequest = {
+                key : 'doc_' + i,
+                contentType : file.contentType 
+            }
+            preloadRequestList[ i-1 ] = preloadRequest;
+        }
+    }
+
+    console.log(preloadRequestList);
+
+    let preloadInfoResponse = await fetch( reserveUrl, {
                 method: 'POST',
                 cache: 'no-cache',
                 headers: {
@@ -516,33 +529,38 @@ async function preloadFiles() {
                     'X-PagoPA-PN-PA': paId,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify( { key: key, contentType: f.contentType})
+                body: JSON.stringify( preloadRequestList )
             });
-            let preloadInfo = await preloadInfoResponse.json();
-            console.log( preloadInfo );
 
-            let loadUrl = preloadInfo.url
+    let preloadInfoList = await preloadInfoResponse.json();
+            console.log( preloadInfoList );
+
+    for ( let i = 1; i <= preloadInfoList.length; i++ ) {
+        let preloadInfo = preloadInfoList[ i-1 ];
+        let preloadRequest = preloadRequestList [ i-1 ];
+        let file = DATA.files[i-1];
+
+        let loadUrl = preloadInfo.url
             let loadResponse = await fetch( loadUrl, {
                 method: preloadInfo.httpMethod,
                 cache: 'no-cache',
                 headers: {
-                    'Content-Type': f.contentType,
+                    'Content-Type': preloadRequest.contentType,
                     'x-amz-meta-secret': preloadInfo.secret
                 },
-                body: Base64.toUint8Array( f.body )
+                body: Base64.toUint8Array( file.body )
             });
 
-            let versionId = loadResponse.headers.get('x-amz-version-id');
-            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( f.body ));
+        let versionId = loadResponse.headers.get('x-amz-version-id');
+            let sha256 = await crypto.subtle.digest('SHA-256', Base64.toUint8Array( file.body ));
             console.log("Key:", preloadInfo.key, "VersionId:", versionId, "Sha256:", sha256);
 
-            f.key = preloadInfo.key;
-            f.versionId = versionId;
-            f.sha256 = unit8ToHexString( sha256 );
-            console.log("Updated file info ", f);
+            file.key = preloadInfo.key;
+            file.versionId = versionId;
+            file.sha256 = unit8ToHexString( sha256 );
+            console.log("Updated file info ", file);
 
-            logMessage( "Caricato file: " + f.key + " con sha256: " + f.sha256 + " e versione: " + f.versionId );
-        }
+            logMessage( "Caricato file: " + file.key + " con sha256: " + file.sha256 + " e versione: " + file.versionId );
     }
 }
 
