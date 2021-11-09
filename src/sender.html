@@ -532,6 +532,11 @@ async function preloadFiles() {
                 body: JSON.stringify( preloadRequestList )
             });
 
+    if (!preloadInfoResponse.ok) {
+        alert('Attenzione raggiunto il limite massimo di allegati da precaricare');
+        return;
+    }
+
     let preloadInfoList = await preloadInfoResponse.json();
             console.log( preloadInfoList );
 
