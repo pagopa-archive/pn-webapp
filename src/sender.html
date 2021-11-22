@@ -432,7 +432,7 @@ async function sendNotification() {
         }
     }
     
-    for( let i = 1; i <= 8; i++ ) {
+    for( let i = 1; i <= 9; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
@@ -616,7 +616,7 @@ async function confirmNotification() {
             });
         }
     }
-    for( let i = 1; i <= 8; i++ ) {
+    for( let i = 1; i <= 9; i++ ) {
         jqEl = jQuery('#recipient-check'+i);
         if( jqEl.is(':checked') ) {
             let taxId = jqEl.data().taxId;
