@@ -77,7 +77,7 @@
           <label for="dtStartDate" class="col-form-label">Data Inizio</label>
         </div>
         <div class="col-md-3">
-          <input type="datetime" class="form-control" id="dtStartDate" value="2021-09-01T00:00:00.000Z">
+          <input type="datetime" class="form-control" id="dtStartDate" value="2021-11-20T00:00:00.000Z">
         </div>
         <div class="col-auto">
           <label for="dtStartDate" class="form-text">YYYY-MM-DDThh:mm:ss.SSSZ</label>
@@ -89,7 +89,7 @@
           <label for="dtEndDate" class="col-form-label">Data Fine</label>
         </div>
         <div class="col-md-3">
-          <input type="datetime" class="form-control" id="dtEndDate" value="2021-12-01T00:00:00.000Z">
+          <input type="datetime" class="form-control" id="dtEndDate" value="2021-12-31T00:00:00.000Z">
         </div>
         <div class="col-auto">
           <label for="dtEndDate" class="form-text">YYYY-MM-DDThh:mm:ss.SSSZ</label>
@@ -231,6 +231,7 @@
       function printNotification(json) {
         console.log(json);
         jQuery('#container').text("");
+        jQuery('#container').append("<h5>Numero di risultati: "+ json.length +" </h5>");
 
         jQuery('#container').append("<h3>Notifiche</h3>");
         
