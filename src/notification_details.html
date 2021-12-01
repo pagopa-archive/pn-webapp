@@ -244,18 +244,30 @@
         let headers = {
             'x-api-key': jQuery('#API-Key').val()
         }
+ 
         headers[userHeader] = searcherId
-
-        fetch(url, {headers})
-        .then( res => res.blob()
-            .then( b => ({ res: res, blob: b })) 
-            )
-        .then( data => {
-            //console.log( data );
-            var file = window.URL.createObjectURL( data.blob );
-            jqEl.attr('href', file);
-            jqEl.attr('download', fileName( data.res.headers, iun, idx) )
-        });
+         
+        fetch(url, {headers}).then( response => {
+            let location =response.headers.get('location');
+            if(location != undefined){
+                fetch(location)
+                    .then( res => 
+                        res.blob().then( b => 
+                            ({ res: res, blob: b })) 
+                    ).then( data => {
+                        var file = window.URL.createObjectURL( data.blob );
+                        jqEl.attr('href', file);
+                        jqEl.attr('download', fileName( data.res.headers, iun, idx) )
+                    });
+            }else{
+                response.blob().then(function(myBlob) {
+                    data = { res: response, blob: myBlob };
+                    var file = window.URL.createObjectURL( data.blob );
+                    jqEl.attr('href', file);
+                    jqEl.attr('download', fileName( data.res.headers, iun, idx) )
+                });
+            }
+        })
     }
 
     function printLegalFacts(searcherId, userEndPoint, userHeader, json) {
