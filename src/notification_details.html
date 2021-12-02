@@ -212,10 +212,9 @@
         var contentTypeValue = "fake/bin";
         for( let key of headers.keys() ) {
             if("content-type" == key.toLowerCase()) {
-                contentDispositionValue = headers.get( key )                    
+                contentTypeValue = headers.get( key )                    
             }
         }
-
         var ext = contentTypeValue.substr( contentTypeValue.indexOf('/')+1);
         var fileName = iun + "_doc" + idx + "." + ext;
 
@@ -229,12 +228,11 @@
                 jQuery('#docs').append("<div class='col-auto' ><a id=\"doc_" + i + "\" href=\"#\"</a>Document#: " + i + "</a></div>");
                 prepareDocLink( json.iun, i, userEndPoint,  userHeader, searcherId)
             }
-        })
+        }) 
     }
 
     function prepareDocLink( iun, idx, userEndPoint, userHeader, searcherId) {
 
-        let jqEl = jQuery('#doc_' + idx);
         let url = jQuery('meta[name="API-GW"]').attr('content') 
         + "/delivery/notifications/"
         + userEndPoint + "/" 
@@ -255,19 +253,23 @@
                         res.blob().then( b => 
                             ({ res: res, blob: b })) 
                     ).then( data => {
-                        var file = window.URL.createObjectURL( data.blob );
-                        jqEl.attr('href', file);
-                        jqEl.attr('download', fileName( data.res.headers, iun, idx) )
+                        createFileToDownload(data, iun, idx);
                     });
             }else{
                 response.blob().then(function(myBlob) {
                     data = { res: response, blob: myBlob };
-                    var file = window.URL.createObjectURL( data.blob );
-                    jqEl.attr('href', file);
-                    jqEl.attr('download', fileName( data.res.headers, iun, idx) )
+                    createFileToDownload(data, iun, idx);
                 });
             }
         })
+    }
+
+    function createFileToDownload(data, iun, idx){
+        let jqEl = jQuery('#doc_' + idx);
+
+        var file = window.URL.createObjectURL( data.blob );
+        jqEl.attr('href', file);
+        jqEl.attr('download', fileName( data.res.headers, iun, idx) )
     }
 
     function printLegalFacts(searcherId, userEndPoint, userHeader, json) {
