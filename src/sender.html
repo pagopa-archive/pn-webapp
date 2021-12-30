@@ -609,7 +609,7 @@ async function confirmNotification() {
                     key: f.key,
                     versionToken: f.versionId
                 },
-                contentType: null, // f.contentType,
+                contentType: f.contentType, // f.contentType,
                 digests : {
                     sha256:  f.sha256
                 }
