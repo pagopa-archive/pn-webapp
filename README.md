@@ -6,10 +6,12 @@ Di seguito le istruzioni per la compilazione e il deploy di queste tenendo prese
 
 ## Comandi avvio
 Per avviare l'ambiente è necessario eseguire lo script `local_dev.sh` da una bash.
-Solamente la prima volta che lo si esegue va eseguito con il parametro aggiuntivo `first_time` tramite il seguente comando:
-	- source scripts/local_dev.sh first_time
+
+Solamente __la prima volta__ che lo si esegue va eseguito con il parametro aggiuntivo `first_time` tramite il seguente comando:
+`source scripts/local_dev.sh first_time`
+
 mentre da tutte le volte successive va eseguito senza parametro tramite il seguente comando:
-	- source scripts/local_dev.sh
+`source scripts/local_dev.sh`
 
 Se l'avvio va a buon si riceverà un output come quello che segue e le risorse del pacchetto saranno fruibili da browser alla url http://localhost:8090/dist/:
 ```
@@ -65,6 +67,7 @@ potrebbe ricevere un errore con un output simile a quello che segue:
 
 L'errore è causato dal tentativo non andato a buon fine di kill del processo node, se fosse necessario procedere al kill forzatamente di questo processo si può procedere 
 con la seguente modalità:
+
 - avviare con i privilegi di amministratore una PowerShell
 - eseguire il comando `Get-Process -Id (Get-NetTCPConnection -LocalPort 8095).OwningProcess` che produrrà un output come quello che segue:
 ```
