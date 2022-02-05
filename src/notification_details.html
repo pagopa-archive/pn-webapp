@@ -371,7 +371,7 @@
             json.timeline.forEach(el => {
                 var content = "<ul class='list-group list-group-flush'> <li class='list-group-item list-group-item-dark'> <b> Data: </b>" + el.timestamp +  " <b>TaxId: </b>" + el.details.taxId +" <b>Stato: </b>" +el.category + "</li> </ul>";
                 switch(el.category){
-                    case "RECEIVED_ACK": el.details.documentsDigests.forEach(digest => content += "<ul class='list-group list-group-flush'> <li class='list-group-item'> <b>Digest: </b>" +digest.sha256 + "</li> " ); content +="</ul>" ;break;
+                    case "REQUEST_ACCEPTED": el.details.documentsDigests.forEach(digest => content += "<ul class='list-group list-group-flush'> <li class='list-group-item'> <b>Digest: </b>" +digest.sha256 + "</li> " ); content +="</ul>" ;break;
                     case "NOTIFICATION_PATH_CHOOSE": {
                         content += "<ul class='list-group list-group-flush'> " +
                         "<li class='list-group-item'> <b>Tipo di Consegna: </b> " + el.details.deliveryMode +" </li>" +
@@ -411,7 +411,7 @@
                     }
                     break;
 
-                    case "SEND_PAPER": {
+                    case "SEND_ANALOG_DOMICILE": {
                         content += "<ul class='list-group list-group-flush'> "
                         if (el.details.address) {
                             content += "<li class='list-group-item'> <b>Spedizione: </b>" + JSON.stringify(el.details.address) + "</li>"
