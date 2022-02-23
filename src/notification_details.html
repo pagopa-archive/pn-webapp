@@ -438,7 +438,14 @@
                         content += "</ul>";
                     }
                     break;
-
+                    
+                    case "REQUEST_REFUSED": {
+                        el.details.errors.forEach(
+                            error => content += "<ul class='list-group list-group-flush'> <li class='list-group-item'> <b>Error: </b>" +error + "</li> " 
+                        ); 
+                        content +="</ul>" ;
+                    }
+                    break;
 
                 }
                 jQuery('#timeline').append(content);
