@@ -400,7 +400,12 @@
 
 function printResponse(json) {
 
-    jQuery('#result').prepend("<form class='row'> <div class='col-auto'><h5>Data: </h5>" +(new Date())+ "</div> <div class='col-auto'><h5>IUN: </h5>" + json.iun + "</div><div class='col-auto'><h5>Protocollo: </h5>" + json.paNotificationId + "</div></form>");
+    jQuery('#result').prepend("<form class='row'> "+
+               "<div class='col-auto'><h5>Data: </h5>" +(new Date())+ "</div> " +
+               "<div class='col-auto'><h5>NotificationId: </h5>" + json.notificationId + "</div>" +
+               "<div class='col-auto'><h5>Protocollo: </h5>" + json.paNotificationId + "</div>"+
+               "<div class='col-auto'><h5>IUN: </h5>" + window.atob(json.notificationId) + "</div>" +
+               "</form>");
 }
 
 async function sendNotification() {
