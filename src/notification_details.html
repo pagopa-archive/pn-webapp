@@ -195,7 +195,7 @@
     function orderLegalFacts(json) {
 
         json.forEach(el => {
-            switch(el.type){
+            switch(el.legalFactsId.type){
                 case "SENDER_ACK": el.idx = 1; break;
                 case "DIGITAL_DELIVERY": el.idx = 2; break;
                 case "ANALOG_DELIVERY": el.idx = 3; break;
@@ -278,16 +278,16 @@
         jQuery('#legalfactsList').empty();
         for (let i = 0; i < json.length; i++) {
             var content = "<ul class='list-group list-group-flush'> <li class='list-group-item'> "+
-            "<b> Tipo: </b>" + json[i].type;
-            if(json[i].type != 'SENDER_ACK') {
+            "<b> Tipo: </b>" + json[i].legalFactsId.type;
+            if(json[i].legalFactsId.type != 'SENDER_ACK') {
                 content += "<b> Tax Id: </b>" + json[i].taxId
             }
             content += "<b> </b>" +
             "<a type='button' class='btn btn-outline-dark' id='download_"+ i +"' href=#> Download</a> </li> </ul>";
             jQuery('#legalfactsList').append(content);
-            let fileName = iun + "__" + json[i].type + (  json[i].taxId ? "_"+json[i].taxId : "");
+            let fileName = iun + "__" + json[i].legalFactsId.type + (  json[i].taxId ? "_"+json[i].taxId : "");
 
-            prepareDownloadLink(searcherId ,iun, i, json[i].legalFactId, userEndPoint, userHeader, fileName);
+            prepareDownloadLink(searcherId ,iun, i, json[i].legalFactsId, userEndPoint, userHeader, fileName);
         }
     }
 
@@ -298,7 +298,7 @@
         + "/delivery/notifications/" 
         + userEndPoint + "/" 
         + iun 
-        + "/legalfacts/" + fileId;
+        + "/legalfacts/" + fileId.type + "/" + fileId.key;
 
         let headers = {
             'x-api-key': jQuery('#API-Key').val()
