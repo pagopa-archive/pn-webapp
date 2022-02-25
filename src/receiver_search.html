@@ -172,6 +172,7 @@
         let recipientId = jQuery('#txtUserId').val();
         let status = jQuery('#txtStatus').val();
         let subjectRegExp = jQuery('#txtSubject').val();
+        let size = 1000;
 
         if(!recipientId || !startDate || !endDate) {
           alert('Please specify Recipient ID, Start Date and End Date field');
@@ -179,7 +180,7 @@
         }
 
 
-        let url = addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp);
+        let url = addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp, size);
         console.log(url);
         fetchNotification(url, recipientId);
       });
@@ -205,8 +206,11 @@
         }
 
         let json = await response.json();
-        orderNotification(json);
-        printNotification(json);
+
+        if(json){
+          orderNotification(json.result);
+          printNotification(json.result);
+        }
       }
 
       function orderNotification(json) {
@@ -218,7 +222,7 @@
           });
       }
 
-      function addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp) {
+      function addQueryParams(endPoint, senderId, startDate, endDate, recipientId, status, subjectRegExp, size) {
         var url = new URL(endPoint);
         url.searchParams.append('recipientId', recipientId);
         url.searchParams.append('startDate', startDate);
@@ -226,6 +230,8 @@
         if(senderId) url.searchParams.append('senderId', senderId);
         if(status) url.searchParams.append('status', status);
         if(subjectRegExp) url.searchParams.append('subjectRegExp', subjectRegExp);
+        url.searchParams.append('size', size);
+
         return url;
       }
 
