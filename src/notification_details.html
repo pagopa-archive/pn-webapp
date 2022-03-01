@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Dettaglio Notifica</title>
         <meta name="description" content="PN: Cittadino">
-        <meta name="API-GW" content="${API_GW_BASE_URL}">
+        <meta name="API-GW" content="${API_GW_BASE_URL}/">
         <script src="js/jquery-3.6.0.slim.min.js"></script>
         <link href="js/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.0/base64.min.js"></script>
@@ -50,14 +50,6 @@
         }
     </style>
 
-    <!--
-    <a href="http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M">
-        scarica
-    </a>(http://localhost:8080/delivery/notifications/acknowledgement/202109-42b2a45b-b602-4d4b-b61e-c8dd9e83a590/0?X-PagoPA-User-Id=CGNNMO80A01H501M)
--->
-<!-- <div class="container">
-    <h1>Dettaglio Notifica</h1>
-</div> -->
 
 <div class="homeicon">
     <a href="index.html">
@@ -234,7 +226,7 @@
     function prepareDocLink( iun, idx, userEndPoint, userHeader, searcherId) {
 
         let url = jQuery('meta[name="API-GW"]').attr('content') 
-        + "/delivery/notifications/"
+        + "delivery/notifications/"
         + userEndPoint + "/" 
         + iun 
         + "/documents/" + idx;
@@ -295,7 +287,7 @@
 
         let jqEl = jQuery('#download_' + idx);
         let url = jQuery('meta[name="API-GW"]').attr('content') 
-        + "/delivery/notifications/" 
+        + "delivery/notifications/"
         + userEndPoint + "/" 
         + iun 
         + "/legalfacts/" + fileId;
